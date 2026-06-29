@@ -44,3 +44,12 @@ Statistics Table :
 | current_streak  | INTEGER      | DEFAULT 0               | Current coding streak      |
 | last_synced     | TIMESTAMP    | NOT NULL                | Last time data was fetched |
 
+topic_scores Table
+| Column          | Data Type    | Constraints             | Description                           |
+| --------------- | ------------ | ----------------------- | ------------------------------------- |
+| id              | BIGSERIAL    | Primary Key             | Topic record ID                       |
+| user_id         | BIGINT       | Foreign Key → users(id) | Owner of the topic data               |
+| topic_name      | VARCHAR(100) | NOT NULL                | Topic name (Arrays, Graphs, DP, etc.) |
+| problems_solved | INTEGER      | DEFAULT 0               | Problems solved in this topic         |
+| strength_score  | DECIMAL(5,2) | DEFAULT 0               | Calculated strength (0–100)           |
+| last_updated    | TIMESTAMP    | NOT NULL                | Last update time                      |
