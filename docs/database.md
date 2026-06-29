@@ -15,7 +15,7 @@ Unique Key : email
 
 Passwords are never stored in plain text. Spring Security will hash them using BCrypt before saving them to the database, so the column must be long enough to store the hashed value.
 
-Coding_account table
+Coding_account table :
 
 | Column Name         | Data Type    | Constraints                       | Description                    |
 | ------------------- | ------------ | --------------------------------- | ------------------------------ |
@@ -29,4 +29,18 @@ Coding_account table
 | created_at          | TIMESTAMP    | NOT NULL                          | Record creation time           |
 | updated_at          | TIMESTAMP    | NULL                              | Last updated time              |
 
+Statistics Table :
+
+| Column          | Data Type    | Constraints             | Description                |
+| --------------- | ------------ | ----------------------- | -------------------------- |
+| id              | BIGSERIAL    | Primary Key             | Statistics ID              |
+| user_id         | BIGINT       | Foreign Key → users(id) | Owner of the statistics    |
+| total_solved    | INTEGER      | NOT NULL                | Total problems solved      |
+| easy_solved     | INTEGER      | DEFAULT 0               | Easy problems solved       |
+| medium_solved   | INTEGER      | DEFAULT 0               | Medium problems solved     |
+| hard_solved     | INTEGER      | DEFAULT 0               | Hard problems solved       |
+| acceptance_rate | DECIMAL(5,2) | NULL                    | Acceptance percentage      |
+| contest_rating  | INTEGER      | NULL                    | Current contest rating     |
+| current_streak  | INTEGER      | DEFAULT 0               | Current coding streak      |
+| last_synced     | TIMESTAMP    | NOT NULL                | Last time data was fetched |
 
