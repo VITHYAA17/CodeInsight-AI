@@ -78,3 +78,15 @@ recomendations
 | interview_readiness | DECIMAL(5,2) | NULL                    | Readiness score at the time of generation |
 | generated_at        | TIMESTAMP    | NOT NULL                | Time when AI generated the recommendation |
 
+Study_Plan table
+
+| Column           | Data Type    | Constraints             | Description             |
+| ---------------- | ------------ | ----------------------- | ----------------------- |
+| id               | BIGSERIAL    | Primary Key             | Study plan ID           |
+| user_id          | BIGINT       | Foreign Key → users(id) | Owner of the study plan |
+| week_number      | INTEGER      | NOT NULL                | Week of the study plan  |
+| topic_name       | VARCHAR(100) | NOT NULL                | Topic to study          |
+| task_description | TEXT         | NOT NULL                | AI-generated task       |
+| status           | VARCHAR(20)  | DEFAULT 'PENDING'       | PENDING / COMPLETED     |
+| created_at       | TIMESTAMP    | NOT NULL                | Creation time           |
+| completed_at     | TIMESTAMP    | NULL                    | Completion time         |
