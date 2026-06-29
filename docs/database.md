@@ -67,3 +67,14 @@ ContentHistory Table
 | rating_after    | INTEGER      | NULL                    | Rating after contest           |
 | rank            | INTEGER      | NULL                    | Contest rank                   |
 | problems_solved | INTEGER      | DEFAULT 0               | Problems solved in contest     |
+
+recomendations
+| Column              | Data Type    | Constraints             | Description                               |
+| ------------------- | ------------ | ----------------------- | ----------------------------------------- |
+| id                  | BIGSERIAL    | Primary Key             | Recommendation ID                         |
+| user_id             | BIGINT       | Foreign Key → users(id) | Owner of the recommendation               |
+| target_company      | VARCHAR(100) | NULL                    | Amazon, Google, Microsoft, etc.           |
+| recommendation_text | TEXT         | NOT NULL                | AI-generated recommendation               |
+| interview_readiness | DECIMAL(5,2) | NULL                    | Readiness score at the time of generation |
+| generated_at        | TIMESTAMP    | NOT NULL                | Time when AI generated the recommendation |
+
