@@ -53,3 +53,17 @@ topic_scores Table
 | problems_solved | INTEGER      | DEFAULT 0               | Problems solved in this topic         |
 | strength_score  | DECIMAL(5,2) | DEFAULT 0               | Calculated strength (0–100)           |
 | last_updated    | TIMESTAMP    | NOT NULL                | Last update time                      |
+
+ContentHistory Table
+
+| Column          | Data Type    | Constraints             | Description                    |
+| --------------- | ------------ | ----------------------- | ------------------------------ |
+| id              | BIGSERIAL    | Primary Key             | Contest record ID              |
+| user_id         | BIGINT       | Foreign Key → users(id) | Owner of the contest           |
+| platform        | VARCHAR(50)  | NOT NULL                | LeetCode, Codeforces, CodeChef |
+| contest_name    | VARCHAR(255) | NOT NULL                | Contest name                   |
+| contest_date    | DATE         | NOT NULL                | Contest date                   |
+| rating_before   | INTEGER      | NULL                    | Rating before contest          |
+| rating_after    | INTEGER      | NULL                    | Rating after contest           |
+| rank            | INTEGER      | NULL                    | Contest rank                   |
+| problems_solved | INTEGER      | DEFAULT 0               | Problems solved in contest     |
