@@ -1,25 +1,40 @@
 package com.codeinsight.backend.controller;
-import jakarta.validation.Valid;
+
 import com.codeinsight.backend.dto.ApiResponse;
-import org.springframework.http.ResponseEntity;
+import com.codeinsight.backend.dto.AuthResponse;
+import com.codeinsight.backend.dto.LoginRequest;
 import com.codeinsight.backend.dto.RegisterRequest;
+import com.codeinsight.backend.dto.UserResponse;
 import com.codeinsight.backend.service.UserService;
-
-
-
-import org.springframework.beans.factory.annotation.Autowired;
-
+import com.codeinsight.backend.util.SecurityUtil;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService service;
+
+    public UserController(UserService service) {
+        this.service = service;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@Valid @RequestBody RegisterRequest request) {
-    return ResponseEntity.ok(userService.register(request));
-}
+        return ResponseEntity.ok(service.register(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(service.login(request));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getCurrentUser() {
+        String email = SecurityUtil.getCurrentUserEmail();
+        return ResponseEntity.ok(service.getUserByEmail(email));
+    }
+
 }

@@ -23,3 +23,7 @@ server:
 logging:
   level:
     org.springframework.security: DEBUG
+
+jwt:
+  secret: MySuperSecretKeyForCodeInsightAIApplication2026MySuperSecretKey
+  expiration: 86400000
