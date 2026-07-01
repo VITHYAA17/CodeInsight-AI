@@ -20,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -68,12 +70,26 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
-        return new ApiResponse(true, "User registered successfully");
+        String token = jwtService.generateToken(savedUser.getEmail());
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("token", token);
+
+        UserResponse userResponse = new UserResponse(
+                savedUser.getId(),
+                savedUser.getName(),
+                savedUser.getEmail(),
+                savedUser.getCreatedAt(),
+                savedUser.getUpdatedAt()
+        );
+        data.put("user", userResponse);
+
+        return new ApiResponse(true, "User registered successfully", data);
     }
 
-    public AuthResponse login(LoginRequest request) {
+    public ApiResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -84,7 +100,19 @@ public class UserService {
 
         String token = jwtService.generateToken(user.getEmail());
 
-        return new AuthResponse(token, "Login successful");
+        Map<String, Object> data = new HashMap<>();
+        data.put("token", token);
+
+        UserResponse userResponse = new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+        );
+        data.put("user", userResponse);
+
+        return new ApiResponse(true, "Login successful", data);
     }
 
     public UserResponse getUserByEmail(String email) {

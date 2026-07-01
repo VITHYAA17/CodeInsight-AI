@@ -1,6 +1,8 @@
 package com.codeinsight.backend.ai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -11,6 +13,8 @@ import java.util.*;
 
 @Service
 public class LlmService {
+
+    private static final Logger log = LoggerFactory.getLogger(LlmService.class);
 
     private final String apiKey;
     private final String model = "gpt-4-turbo";
@@ -25,7 +29,7 @@ public class LlmService {
         // Get API key from environment variable
         this.apiKey = System.getenv("OPENAI_API_KEY");
         if (this.apiKey == null || this.apiKey.isEmpty()) {
-            throw new IllegalStateException("OPENAI_API_KEY environment variable is not set");
+            log.warn("OPENAI_API_KEY environment variable is not set. OpenAI calls will fail at runtime.");
         }
     }
 
@@ -95,6 +99,9 @@ public class LlmService {
      * Call OpenAI API
      */
     private String callOpenAiApi(Map<String, Object> request) throws Exception {
+        if (this.apiKey == null || this.apiKey.isEmpty()) {
+            throw new IllegalStateException("OPENAI_API_KEY environment variable is not set");
+        }
         String url = baseUrl + "/chat/completions";
 
         HttpHeaders headers = new HttpHeaders();

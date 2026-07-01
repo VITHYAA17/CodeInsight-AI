@@ -27,14 +27,15 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(service.login(request));
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser() {
+    public ResponseEntity<ApiResponse> getCurrentUser() {
         String email = SecurityUtil.getCurrentUserEmail();
-        return ResponseEntity.ok(service.getUserByEmail(email));
+        UserResponse user = service.getUserByEmail(email);
+        return ResponseEntity.ok(new ApiResponse(true, "User profile fetched", user));
     }
 
 }
