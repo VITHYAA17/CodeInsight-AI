@@ -12,6 +12,12 @@ public class OpenAiConfig {
      */
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
+        org.springframework.http.client.SimpleClientHttpRequestFactory requestFactory = 
+            new org.springframework.http.client.SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(10000); // 10 seconds
+        requestFactory.setReadTimeout(10000);    // 10 seconds
+        restTemplate.setRequestFactory(requestFactory);
+        return restTemplate;
     }
 }

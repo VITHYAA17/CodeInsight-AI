@@ -62,16 +62,12 @@ public class InsightsService {
     private Map<String, Integer> matchCompanies(Long userId, MetricsDTO metrics) {
         Map<String, Integer> companyMatch = new LinkedHashMap<>();
         
-        Integer baseScore = metrics.getTotalProblems() > 0 ? (metrics.getTotalProblems() / 5) : 0;
-        baseScore = Math.min(baseScore, 100);
-
-        // Company skill requirements (simplified)
-        companyMatch.put("Google", Math.min(baseScore + 10, 100));
-        companyMatch.put("Amazon", Math.min(baseScore + 5, 100));
-        companyMatch.put("Microsoft", Math.min(baseScore, 100));
-        companyMatch.put("Apple", Math.min(baseScore - 5, 100));
-        companyMatch.put("Meta", Math.min(baseScore, 100));
-        companyMatch.put("Goldman Sachs", Math.min(baseScore - 10, 100));
+        companyMatch.put("Google", interviewReadinessService.calculateCompanyReadiness(userId, "Google"));
+        companyMatch.put("Amazon", interviewReadinessService.calculateCompanyReadiness(userId, "Amazon"));
+        companyMatch.put("Microsoft", interviewReadinessService.calculateCompanyReadiness(userId, "Microsoft"));
+        companyMatch.put("Meta", interviewReadinessService.calculateCompanyReadiness(userId, "Meta"));
+        companyMatch.put("Apple", interviewReadinessService.calculateCompanyReadiness(userId, "Apple"));
+        companyMatch.put("Goldman Sachs", interviewReadinessService.calculateCompanyReadiness(userId, "Goldman Sachs"));
 
         return companyMatch;
     }
@@ -115,6 +111,11 @@ public class InsightsService {
 
     private List<SkillGapDTO> identifySkillGaps(Long userId) {
         List<TopicScores> topics = topicScoresRepository.findByUserId(userId);
+        long uniqueCount = topics.stream().map(TopicScores::getTopicName).distinct().count();
+        if (topics.isEmpty() || uniqueCount < topics.size()) {
+            initializeTopicScores(userId);
+            topics = topicScoresRepository.findByUserId(userId);
+        }
         
         return topics.stream()
                 .filter(t -> t.getStrengthScore().compareTo(new BigDecimal(70)) < 0)
@@ -142,6 +143,53 @@ public class InsightsService {
                     return gap;
                 })
                 .collect(Collectors.toList());
+    }
+
+    private void initializeTopicScores(Long userId) {
+        List<TopicScores> existing = topicScoresRepository.findByUserId(userId);
+        if (!existing.isEmpty()) {
+            topicScoresRepository.deleteAll(existing);
+        }
+
+        int totalSolved = analyticsService.calculateMetrics(userId).getTotalProblems();
+        if (totalSolved == 0) {
+            totalSolved = 100;
+        }
+
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+
+        Object[][] topicData = {
+            {"Arrays & Strings", 0.30, 85},
+            {"Sorting & Searching", 0.20, 75},
+            {"Trees & Graphs", 0.12, 48},
+            {"Stacks & Queues", 0.12, 65},
+            {"Recursion & Backtracking", 0.10, 55},
+            {"Dynamic Programming", 0.08, 35},
+            {"Hash Tables", 0.08, 70}
+        };
+
+        int runningSum = 0;
+        for (int i = 0; i < topicData.length; i++) {
+            TopicScores ts = new TopicScores();
+            ts.setUserId(userId);
+            ts.setTopicName((String) topicData[i][0]);
+            double percent = (Double) topicData[i][1];
+            
+            int solvedCount;
+            if (i == topicData.length - 1) {
+                solvedCount = totalSolved - runningSum;
+            } else {
+                solvedCount = (int) Math.round(totalSolved * percent);
+                runningSum += solvedCount;
+            }
+            
+            ts.setProblemsSolved(Math.max(1, solvedCount));
+            ts.setStrengthScore(new BigDecimal((Integer) topicData[i][2]));
+            ts.setLastUpdated(now);
+            ts.setCreatedAt(now);
+            ts.setUpdatedAt(now);
+            topicScoresRepository.save(ts);
+        }
     }
 
     private String getPerformanceLevel(Integer readinessScore) {

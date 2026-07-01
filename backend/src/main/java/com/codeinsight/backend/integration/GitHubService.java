@@ -10,20 +10,33 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class GitHubService implements PlatformService {
 
     private final CodingAccountRepository codingAccountRepository;
     private final StatisticsRepository statisticsRepository;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
     private static final String GITHUB_API_URL = "https://api.github.com";
     private static final String PLATFORM_NAME = "github";
 
     public GitHubService(CodingAccountRepository codingAccountRepository,
-                        StatisticsRepository statisticsRepository) {
+                        StatisticsRepository statisticsRepository,
+                        RestTemplate restTemplate,
+                        ObjectMapper objectMapper) {
         this.codingAccountRepository = codingAccountRepository;
         this.statisticsRepository = statisticsRepository;
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -49,17 +62,36 @@ public class GitHubService implements PlatformService {
     @Override
     public void syncUserData(Long userId, String username) {
         try {
-            // API endpoint: https://api.github.com/users/username
+            String url = GITHUB_API_URL + "/users/" + username;
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+            JsonNode rootNode = objectMapper.readTree(response.getBody());
+            
+            if (rootNode.isMissingNode() || rootNode.isNull()) {
+                throw new RuntimeException("User not found on GitHub: " + username);
+            }
+            
+            int publicRepos = rootNode.path("public_repos").asInt(0);
+            
+            int totalSolved = publicRepos;
+            int easySolved = (int) Math.round(totalSolved * 0.3);
+            int mediumSolved = (int) Math.round(totalSolved * 0.5);
+            int hardSolved = totalSolved - (easySolved + mediumSolved);
+            
             Statistics stats = new Statistics();
             stats.setUserId(userId);
             stats.setPlatform(PLATFORM_NAME);
-            stats.setTotalSolved(250); // Public repositories as proxy
-            stats.setEasySolved(80);
-            stats.setMediumSolved(120);
-            stats.setHardSolved(50);
-            stats.setAcceptanceRate(new BigDecimal("60.00"));
+            stats.setTotalSolved(totalSolved);
+            stats.setEasySolved(easySolved);
+            stats.setMediumSolved(mediumSolved);
+            stats.setHardSolved(hardSolved);
+            stats.setAcceptanceRate(new BigDecimal("100.00"));
             stats.setContestRating(0); // GitHub doesn't have ratings
-            stats.setCurrentStreak(12);
+            stats.setCurrentStreak(0);
             stats.setLastSynced(LocalDateTime.now());
             stats.setCreatedAt(LocalDateTime.now());
             stats.setUpdatedAt(LocalDateTime.now());
@@ -72,7 +104,6 @@ public class GitHubService implements PlatformService {
                 existingStats.setMediumSolved(stats.getMediumSolved());
                 existingStats.setHardSolved(stats.getHardSolved());
                 existingStats.setAcceptanceRate(stats.getAcceptanceRate());
-                existingStats.setCurrentStreak(stats.getCurrentStreak());
                 existingStats.setLastSynced(LocalDateTime.now());
                 existingStats.setUpdatedAt(LocalDateTime.now());
                 statisticsRepository.save(existingStats);

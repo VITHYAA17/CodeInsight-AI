@@ -59,7 +59,7 @@ public class CodeChefService implements PlatformService {
             stats.setHardSolved(15);
             stats.setAcceptanceRate(new BigDecimal("48.75"));
             stats.setContestRating(1550);
-            stats.setCurrentStreak(3);
+            stats.setCurrentStreak(0);
             stats.setLastSynced(LocalDateTime.now());
             stats.setCreatedAt(LocalDateTime.now());
             stats.setUpdatedAt(LocalDateTime.now());

@@ -6,6 +6,7 @@ import com.codeinsight.backend.dto.CodingAccountDTO;
 import com.codeinsight.backend.dto.LoginRequest;
 import com.codeinsight.backend.dto.RegisterRequest;
 import com.codeinsight.backend.dto.UserResponse;
+import com.codeinsight.backend.dto.UpdateProfileRequest;
 import com.codeinsight.backend.entity.CodingAccount;
 import com.codeinsight.backend.entity.User;
 import com.codeinsight.backend.repository.CodingAccountRepository;
@@ -77,13 +78,7 @@ public class UserService {
         Map<String, Object> data = new HashMap<>();
         data.put("token", token);
 
-        UserResponse userResponse = new UserResponse(
-                savedUser.getId(),
-                savedUser.getName(),
-                savedUser.getEmail(),
-                savedUser.getCreatedAt(),
-                savedUser.getUpdatedAt()
-        );
+        UserResponse userResponse = mapToUserResponse(savedUser);
         data.put("user", userResponse);
 
         return new ApiResponse(true, "User registered successfully", data);
@@ -103,13 +98,7 @@ public class UserService {
         Map<String, Object> data = new HashMap<>();
         data.put("token", token);
 
-        UserResponse userResponse = new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getCreatedAt(),
-                user.getUpdatedAt()
-        );
+        UserResponse userResponse = mapToUserResponse(user);
         data.put("user", userResponse);
 
         return new ApiResponse(true, "Login successful", data);
@@ -119,12 +108,45 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        return mapToUserResponse(user);
+    }
+
+    public UserResponse updateProfile(String email, UpdateProfileRequest request) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (request.getName() != null) {
+            user.setName(request.getName());
+        }
+        if (request.getCollegeName() != null) {
+            user.setCollegeName(request.getCollegeName());
+        }
+        if (request.getResumeUrl() != null) {
+            user.setResumeUrl(request.getResumeUrl());
+        }
+        if (request.getProfilePhoto() != null) {
+            user.setProfilePhoto(request.getProfilePhoto());
+        }
+        if (request.getContactNumber() != null) {
+            user.setContactNumber(request.getContactNumber());
+        }
+        user.setUpdatedAt(LocalDateTime.now());
+        
+        User savedUser = userRepository.save(user);
+        return mapToUserResponse(savedUser);
+    }
+
+    private UserResponse mapToUserResponse(User user) {
         return new UserResponse(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
                 user.getCreatedAt(),
-                user.getUpdatedAt()
+                user.getUpdatedAt(),
+                user.getCollegeName(),
+                user.getResumeUrl(),
+                user.getProfilePhoto(),
+                user.getContactNumber()
         );
     }
 

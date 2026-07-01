@@ -13,4 +13,5 @@ public interface StudyPlanRepository extends JpaRepository<StudyPlan, Long> {
     List<StudyPlan> findByUserIdAndStatus(Long userId, String status);
     List<StudyPlan> findByUserIdOrderByWeekNumberAsc(Long userId);
     Optional<StudyPlan> findByUserIdAndWeekNumber(Long userId, Integer weekNumber);
+    void deleteByUserId(Long userId);
 }

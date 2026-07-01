@@ -54,6 +54,9 @@ public class StudyPlanGeneratorService {
             throw new IllegalArgumentException("Weeks available must be between 2 and 24");
         }
 
+        // Clear existing study plans for this user first to avoid duplication
+        studyPlanRepository.deleteByUserId(userId);
+
         // Get current insights
         InsightsDTO insights = insightsService.generateInsights(userId);
         MetricsDTO metrics = analyticsService.calculateMetrics(userId);
@@ -65,10 +68,22 @@ public class StudyPlanGeneratorService {
         String prompt = PromptTemplates.getStudyPlanPrompt(context, targetCompany, weeksAvailable);
 
         // Generate study plan using LLM
-        String studyPlanText = llmService.generateContent(prompt);
+        String studyPlanText = null;
+        try {
+            studyPlanText = llmService.generateContent(prompt);
+        } catch (Exception e) {
+            org.slf4j.LoggerFactory.getLogger(StudyPlanGeneratorService.class)
+                .warn("OpenAI API call failed, using default structured fallback plan: {}", e.getMessage());
+        }
 
         // Parse and save study plan to database
-        List<StudyPlan> createdPlans = parseAndSaveStudyPlan(user, studyPlanText, weeksAvailable);
+        LocalDateTime now = LocalDateTime.now();
+        List<StudyPlan> createdPlans;
+        if (studyPlanText != null) {
+            createdPlans = parseAndSaveStudyPlan(user, studyPlanText, targetCompany, weeksAvailable);
+        } else {
+            createdPlans = createDefaultStructuredPlan(user, targetCompany, weeksAvailable, now);
+        }
 
         // Calculate plan summary
         int totalTasks = createdPlans.size();
@@ -88,7 +103,7 @@ public class StudyPlanGeneratorService {
     /**
      * Parse AI-generated study plan and save to database
      */
-    private List<StudyPlan> parseAndSaveStudyPlan(User user, String planText, Integer weeksAvailable) {
+    private List<StudyPlan> parseAndSaveStudyPlan(User user, String planText, String targetCompany, Integer weeksAvailable) {
         List<StudyPlan> savedPlans = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
 
@@ -128,7 +143,7 @@ public class StudyPlanGeneratorService {
 
         // If parsing didn't generate enough tasks, create default structured tasks
         if (savedPlans.isEmpty()) {
-            savedPlans.addAll(createDefaultStructuredPlan(user, weeksAvailable, now));
+            savedPlans.addAll(createDefaultStructuredPlan(user, targetCompany, weeksAvailable, now));
         }
 
         return savedPlans;
@@ -137,44 +152,100 @@ public class StudyPlanGeneratorService {
     /**
      * Create default structured study plan if AI parsing fails
      */
-    private List<StudyPlan> createDefaultStructuredPlan(User user, Integer weeksAvailable, LocalDateTime now) {
+    private List<StudyPlan> createDefaultStructuredPlan(User user, String targetCompany, Integer weeksAvailable, LocalDateTime now) {
         List<StudyPlan> plans = new ArrayList<>();
-        String[] defaultTopics = {
+        String[] topics;
+        String lowercaseCompany = targetCompany.toLowerCase();
+        if (lowercaseCompany.contains("google")) {
+            topics = new String[]{
+                "Graphs (BFS/DFS & Topological Sort)",
+                "Dynamic Programming & Memoization",
+                "Trees, Binary Search Trees & Heaps",
+                "Advanced Recursion & Backtracking",
+                "Arrays, Two Pointers & Sliding Window",
+                "Google System Design (Scale & Global Latency)",
+                "String Processing & Trie Data Structures",
+                "Google-specific Mock Coding & Go/C++ Best Practices"
+            };
+        } else if (lowercaseCompany.contains("amazon")) {
+            topics = new String[]{
+                "System Design & Object-Oriented Design (LLD)",
+                "Hash Tables, Maps & Sets",
+                "Trees & Tries (Prefix Trees)",
+                "Arrays & Binary Search (Divide & Conquer)",
+                "Greedy Algorithms & Priority Queues",
+                "Dynamic Programming (Knapsack & Grid Problems)",
+                "Graphs (Shortest Paths & MST)",
+                "Amazon Leadership Principles & Behavioral Star Method"
+            };
+        } else if (lowercaseCompany.contains("meta") || lowercaseCompany.contains("facebook")) {
+            topics = new String[]{
+                "Two Pointers & Sliding Window",
+                "Stacks & Queues (Monotonic Stack)",
+                "Binary Trees & Graph Traversals",
+                "System Design (Caching, CDN & Feed Architecture)",
+                "Recursion & Backtracking (Permutations)",
+                "Arrays & Hash Maps Optimization",
+                "Sorting, Binary Search & K-Way Merge",
+                "Meta Architecture Mock Interviews"
+            };
+        } else if (lowercaseCompany.contains("microsoft")) {
+            topics = new String[]{
+                "Linked Lists & Core Pointer Manipulation",
+                "System Design (Azure Cloud Services & Microservices)",
+                "Binary Search Trees & Heap Operations",
+                "Sorting, Searching & String Matching",
+                "Bit Manipulation & Math Problems",
+                "Dynamic Programming & Recursion",
+                "Arrays & Multi-dimensional Matrix Problems",
+                "Microsoft Culture & Behavioral Preparation"
+            };
+        } else {
+            topics = new String[]{
                 "Arrays & Strings",
-                "Linked Lists",
+                "Linked Lists & Pointer Manipulation",
                 "Stacks & Queues",
-                "Trees & Graphs",
+                "Trees & Graph Traversals",
                 "Dynamic Programming",
                 "Sorting & Searching",
-                "Hash Tables",
-                "Heaps",
+                "Hash Tables & Collision Resolution",
+                "Heaps & Priority Queues",
                 "Greedy Algorithms",
-                "Backtracking",
-                "System Design",
+                "Backtracking & Exhaustive Search",
+                "System Design Fundamentals",
                 "Bit Manipulation"
-        };
+            };
+        }
 
         for (int week = 1; week <= weeksAvailable; week++) {
-            String topic = defaultTopics[(week - 1) % defaultTopics.length];
-            String taskDescription = String.format(
-                    "Week %d: Master %s\n" +
-                    "- Study core concepts and algorithms\n" +
-                    "- Solve 5-7 medium problems\n" +
-                    "- Complete 2-3 hard problems\n" +
-                    "- Review solutions and optimize",
-                    week, topic
-            );
+            String topic = topics[(week - 1) % topics.length];
+            
+            String[] subTaskTemplates = {
+                "Core Concepts: Review theory, complexities, and standard patterns for %s",
+                "Medium Practice: Solve 5-7 medium-level %s problems on LeetCode/Codeforces",
+                "Hard Practice: Complete 2-3 hard-level %s challenges asked in %s interviews",
+                "Mock Interview: Explain and write clean solutions for %s under 30 minutes"
+            };
 
-            StudyPlan plan = new StudyPlan();
-            plan.setUserId(user.getId());
-            plan.setWeekNumber(week);
-            plan.setTopicName(topic);
-            plan.setTaskDescription(taskDescription);
-            plan.setStatus("PENDING");
-            plan.setCreatedAt(now);
-            plan.setUpdatedAt(now);
+            for (String template : subTaskTemplates) {
+                String desc;
+                if (template.contains("%s interviews")) {
+                    desc = String.format(template, topic, targetCompany);
+                } else {
+                    desc = String.format(template, topic);
+                }
 
-            plans.add(studyPlanRepository.save(plan));
+                StudyPlan plan = new StudyPlan();
+                plan.setUserId(user.getId());
+                plan.setWeekNumber(week);
+                plan.setTopicName(topic);
+                plan.setTaskDescription(desc);
+                plan.setStatus("PENDING");
+                plan.setCreatedAt(now);
+                plan.setUpdatedAt(now);
+
+                plans.add(studyPlanRepository.save(plan));
+            }
         }
 
         return plans;

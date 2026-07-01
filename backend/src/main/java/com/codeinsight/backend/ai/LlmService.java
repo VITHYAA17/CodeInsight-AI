@@ -17,7 +17,7 @@ public class LlmService {
     private static final Logger log = LoggerFactory.getLogger(LlmService.class);
 
     private final String apiKey;
-    private final String model = "gpt-4-turbo";
+    private final String model = "gpt-4o-mini";
     private final String baseUrl = "https://api.openai.com/v1";
 
     private final RestTemplate restTemplate;
@@ -45,10 +45,13 @@ public class LlmService {
      */
     public String generateContent(String prompt, double temperature) {
         try {
+            log.info("Initiating request to OpenAI completions API using model {}...", model);
             Map<String, Object> request = createRequest(prompt, temperature);
             String response = callOpenAiApi(request);
+            log.info("Successfully received response from OpenAI completions API.");
             return extractContent(response);
         } catch (Exception e) {
+            log.error("Exception during OpenAI API call: ", e);
             throw new RuntimeException("Failed to generate content: " + e.getMessage(), e);
         }
     }

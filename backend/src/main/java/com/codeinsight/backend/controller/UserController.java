@@ -5,6 +5,7 @@ import com.codeinsight.backend.dto.AuthResponse;
 import com.codeinsight.backend.dto.LoginRequest;
 import com.codeinsight.backend.dto.RegisterRequest;
 import com.codeinsight.backend.dto.UserResponse;
+import com.codeinsight.backend.dto.UpdateProfileRequest;
 import com.codeinsight.backend.service.UserService;
 import com.codeinsight.backend.util.SecurityUtil;
 import jakarta.validation.Valid;
@@ -38,4 +39,10 @@ public class UserController {
         return ResponseEntity.ok(new ApiResponse(true, "User profile fetched", user));
     }
 
+    @PutMapping("/profile")
+    public ResponseEntity<ApiResponse> updateProfile(@Valid @RequestBody UpdateProfileRequest request) {
+        String email = SecurityUtil.getCurrentUserEmail();
+        UserResponse updated = service.updateProfile(email, request);
+        return ResponseEntity.ok(new ApiResponse(true, "Profile updated successfully", updated));
+    }
 }

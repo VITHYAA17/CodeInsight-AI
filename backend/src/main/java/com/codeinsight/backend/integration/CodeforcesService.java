@@ -9,21 +9,32 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CodeforcesService implements PlatformService {
 
     private final CodingAccountRepository codingAccountRepository;
     private final StatisticsRepository statisticsRepository;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
     private static final String CODEFORCES_API_URL = "https://codeforces.com/api";
     private static final String PLATFORM_NAME = "codeforces";
 
     public CodeforcesService(CodingAccountRepository codingAccountRepository,
-                            StatisticsRepository statisticsRepository) {
+                            StatisticsRepository statisticsRepository,
+                            RestTemplate restTemplate,
+                            ObjectMapper objectMapper) {
         this.codingAccountRepository = codingAccountRepository;
         this.statisticsRepository = statisticsRepository;
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -49,17 +60,74 @@ public class CodeforcesService implements PlatformService {
     @Override
     public void syncUserData(Long userId, String username) {
         try {
-            // API endpoint: https://codeforces.com/api/user.info?handles=username
+            // Get user info
+            String infoUrl = CODEFORCES_API_URL + "/user.info?handles=" + username;
+            String infoResponse = restTemplate.getForObject(infoUrl, String.class);
+            JsonNode infoRoot = objectMapper.readTree(infoResponse);
+            
+            if (!"OK".equalsIgnoreCase(infoRoot.path("status").asText())) {
+                throw new RuntimeException("Codeforces user info API call failed");
+            }
+            
+            JsonNode userObj = infoRoot.path("result").path(0);
+            if (userObj.isMissingNode() || userObj.isNull()) {
+                throw new RuntimeException("User not found on Codeforces: " + username);
+            }
+            
+            int rating = userObj.path("rating").asInt(0);
+            
+            // Get user submissions
+            String statusUrl = CODEFORCES_API_URL + "/user.status?handle=" + username;
+            String statusResponse = restTemplate.getForObject(statusUrl, String.class);
+            JsonNode statusRoot = objectMapper.readTree(statusResponse);
+            
+            if (!"OK".equalsIgnoreCase(statusRoot.path("status").asText())) {
+                throw new RuntimeException("Codeforces user status API call failed");
+            }
+            
+            Set<String> solvedProblems = new HashSet<>();
+            int easySolved = 0;
+            int mediumSolved = 0;
+            int hardSolved = 0;
+            
+            JsonNode subNode = statusRoot.path("result");
+            if (subNode.isArray()) {
+                for (JsonNode sub : subNode) {
+                    if ("OK".equalsIgnoreCase(sub.path("verdict").asText())) {
+                        JsonNode problem = sub.path("problem");
+                        String problemKey = problem.path("contestId").asInt(0) + "_" + problem.path("index").asText();
+                        if (solvedProblems.add(problemKey)) {
+                            int problemRating = problem.path("rating").asInt(0);
+                            if (problemRating < 1200) {
+                                easySolved++;
+                            } else if (problemRating < 1900) {
+                                mediumSolved++;
+                            } else {
+                                hardSolved++;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            int totalSolved = solvedProblems.size();
+            double totalSubmissions = subNode.isArray() ? subNode.size() : 1.0;
+            BigDecimal acceptanceRate = BigDecimal.ZERO;
+            if (totalSubmissions > 0) {
+                double rate = (totalSolved / totalSubmissions) * 100.0;
+                acceptanceRate = new BigDecimal(rate).setScale(2, java.math.RoundingMode.HALF_UP);
+            }
+            
             Statistics stats = new Statistics();
             stats.setUserId(userId);
             stats.setPlatform(PLATFORM_NAME);
-            stats.setTotalSolved(120); // Mock data
-            stats.setEasySolved(40);
-            stats.setMediumSolved(60);
-            stats.setHardSolved(20);
-            stats.setAcceptanceRate(new BigDecimal("52.30"));
-            stats.setContestRating(1650);
-            stats.setCurrentStreak(5);
+            stats.setTotalSolved(totalSolved);
+            stats.setEasySolved(easySolved);
+            stats.setMediumSolved(mediumSolved);
+            stats.setHardSolved(hardSolved);
+            stats.setAcceptanceRate(acceptanceRate);
+            stats.setContestRating(rating);
+            stats.setCurrentStreak(0);
             stats.setLastSynced(LocalDateTime.now());
             stats.setCreatedAt(LocalDateTime.now());
             stats.setUpdatedAt(LocalDateTime.now());
@@ -73,7 +141,6 @@ public class CodeforcesService implements PlatformService {
                 existingStats.setHardSolved(stats.getHardSolved());
                 existingStats.setAcceptanceRate(stats.getAcceptanceRate());
                 existingStats.setContestRating(stats.getContestRating());
-                existingStats.setCurrentStreak(stats.getCurrentStreak());
                 existingStats.setLastSynced(LocalDateTime.now());
                 existingStats.setUpdatedAt(LocalDateTime.now());
                 statisticsRepository.save(existingStats);
