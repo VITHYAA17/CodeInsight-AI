@@ -19,4 +19,15 @@ public class RecommendationDTO {
     private LocalDateTime generatedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    // Constructor with 6 params for API response
+    public RecommendationDTO(Long id, Long userId, String targetCompany, String recommendationText, 
+                            BigDecimal interviewReadiness, LocalDateTime generatedAt) {
+        this.id = id;
+        this.userId = userId;
+        this.targetCompany = targetCompany;
+        this.recommendationText = recommendationText;
+        this.interviewReadiness = interviewReadiness;
+        this.generatedAt = generatedAt;
+    }
 }

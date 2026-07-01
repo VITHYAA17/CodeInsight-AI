@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/codeinsight
     username: postgres
-    password: CodeInsight@123
+    password: your-postgres-password
 
   jpa:
     hibernate:
@@ -27,10 +27,10 @@ logging:
 spring:
   ai:
     openai:
-      api-key: ${OPENAI_API_KEY:your-openai-api-key-here}
+      api-key: ${OPENAI_API_KEY}
       model: gpt-4-turbo
       base-url: https://api.openai.com/v1
 
 jwt:
-  secret: MySuperSecretKeyForCodeInsightAIApplication2026MySuperSecretKey
+  secret: your-super-secret-jwt-key-min-32-chars
   expiration: 86400000

@@ -34,15 +34,15 @@ public class InsightsService {
 
         // Calculate interview readiness
         Integer readinessScore = interviewReadinessService.calculateReadiness(userId);
-        insights.setInterviewReadiness(readinessScore);
+        insights.setInterviewReadinessScore(readinessScore);
 
         // Match with companies
         Map<String, Integer> companyMatch = matchCompanies(userId, metrics);
-        insights.setCompanyMatch(companyMatch);
+        insights.setCompanyMatchingScores(companyMatch);
 
         // Generate recommendations
         List<String> recommendations = generateRecommendations(userId, metrics);
-        insights.setRecommendations(recommendations);
+        insights.setTopicStrengths(recommendations);
 
         // Identify skill gaps
         List<SkillGapDTO> skillGaps = identifySkillGaps(userId);
@@ -97,7 +97,7 @@ public class InsightsService {
         }
 
         // Based on streaks
-        if (metrics.getCurrentStreak() < 7) {
+        if (metrics.getMaxCurrentStreak() < 7) {
             recommendations.add("🔥 Maintain a consistent coding streak (7+ days)");
         }
 

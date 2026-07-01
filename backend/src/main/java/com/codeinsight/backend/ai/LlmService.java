@@ -1,96 +1,129 @@
 package com.codeinsight.backend.ai;
 
-import org.springframework.ai.chat.ChatClient;
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.openai.OpenAiChatClient;
-import org.springframework.ai.openai.OpenAiChatOptions;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.*;
 
 @Service
 public class LlmService {
 
-    private final ChatClient chatClient;
+    private final String apiKey;
+    private final String model = "gpt-4-turbo";
+    private final String baseUrl = "https://api.openai.com/v1";
 
-    public LlmService(OpenAiChatClient openAiChatClient) {
-        this.chatClient = openAiChatClient;
-    }
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
-    /**
-     * Generate content using OpenAI GPT model
-     * @param prompt The prompt to send to the model
-     * @return The generated response
-     */
-    public String generateContent(String prompt) {
-        try {
-            Message message = new UserMessage(prompt);
-            Prompt p = new Prompt(message, OpenAiChatOptions.builder()
-                    .withModel("gpt-4-turbo")
-                    .withTemperature(0.7)
-                    .build());
-            
-            return chatClient.call(p).getResult().getOutput().getContent();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to generate content from LLM: " + e.getMessage(), e);
+    public LlmService(RestTemplate restTemplate, ObjectMapper objectMapper) {
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
+        // Get API key from environment variable
+        this.apiKey = System.getenv("OPENAI_API_KEY");
+        if (this.apiKey == null || this.apiKey.isEmpty()) {
+            throw new IllegalStateException("OPENAI_API_KEY environment variable is not set");
         }
     }
 
     /**
-     * Generate content with custom temperature (creativity level)
-     * @param prompt The prompt to send to the model
-     * @param temperature Temperature between 0 (deterministic) and 2 (creative)
-     * @return The generated response
+     * Generate content using OpenAI API with default temperature (0.7)
+     */
+    public String generateContent(String prompt) {
+        return generateContent(prompt, 0.7);
+    }
+
+    /**
+     * Generate content with custom temperature
      */
     public String generateContent(String prompt, double temperature) {
         try {
-            Message message = new UserMessage(prompt);
-            Prompt p = new Prompt(message, OpenAiChatOptions.builder()
-                    .withModel("gpt-4-turbo")
-                    .withTemperature(temperature)
-                    .build());
-            
-            return chatClient.call(p).getResult().getOutput().getContent();
+            Map<String, Object> request = createRequest(prompt, temperature);
+            String response = callOpenAiApi(request);
+            return extractContent(response);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to generate content from LLM: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to generate content: " + e.getMessage(), e);
         }
     }
 
     /**
-     * Generate structured JSON response
-     * @param prompt The prompt requesting JSON output
-     * @return JSON string from the model
+     * Generate JSON-formatted content
      */
     public String generateJsonContent(String prompt) {
-        String promptWithJsonRequest = prompt + "\n\nReturn ONLY valid JSON, no markdown, no explanations.";
-        return generateContent(promptWithJsonRequest, 0.2); // Lower temperature for consistency
+        String promptWithJson = prompt + "\n\nReturn ONLY valid JSON, no markdown, no explanations.";
+        return generateContent(promptWithJson, 0.2);
     }
 
     /**
-     * Stream content generation (for long responses)
-     * @param prompt The prompt to send to the model
-     * @return The generated response
+     * Analyze content
+     */
+    public String analyzeContent(String content, String analysisType) {
+        String prompt = "Please analyze the following " + analysisType + ":\n\n" + content;
+        return generateContent(prompt, 0.5);
+    }
+
+    /**
+     * Stream content (returns same as regular for now)
      */
     public String generateStreamContent(String prompt) {
         return generateContent(prompt);
     }
 
     /**
-     * Analyze and summarize content
-     * @param content Content to analyze
-     * @param analysisType Type of analysis (summary, gaps, strengths, etc.)
-     * @return Analysis result
+     * Create OpenAI API request
      */
-    public String analyzeContent(String content, String analysisType) {
-        String analysisPrompt = """
-                Analyze the following content and provide a %s:
-                
-                CONTENT:
-                %s
-                
-                Be concise and specific.
-                """.formatted(analysisType, content);
-        
-        return generateContent(analysisPrompt);
+    private Map<String, Object> createRequest(String prompt, double temperature) {
+        Map<String, Object> request = new HashMap<>();
+        request.put("model", model);
+        request.put("temperature", temperature);
+        request.put("max_tokens", 2000);
+
+        List<Map<String, String>> messages = new ArrayList<>();
+        Map<String, String> message = new HashMap<>();
+        message.put("role", "user");
+        message.put("content", prompt);
+        messages.add(message);
+
+        request.put("messages", messages);
+        return request;
+    }
+
+    /**
+     * Call OpenAI API
+     */
+    private String callOpenAiApi(Map<String, Object> request) throws Exception {
+        String url = baseUrl + "/chat/completions";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + apiKey);
+
+        String jsonRequest = objectMapper.writeValueAsString(request);
+        HttpEntity<String> entity = new HttpEntity<>(jsonRequest, headers);
+
+        return restTemplate.postForObject(url, entity, String.class);
+    }
+
+    /**
+     * Extract content from OpenAI response
+     */
+    private String extractContent(String response) throws Exception {
+        Map<String, Object> responseMap = objectMapper.readValue(response, Map.class);
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> choices = (List<Map<String, Object>>) responseMap.get("choices");
+
+        if (choices != null && !choices.isEmpty()) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
+            if (message != null) {
+                return (String) message.get("content");
+            }
+        }
+
+        throw new RuntimeException("Invalid response format from OpenAI");
     }
 }

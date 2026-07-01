@@ -77,7 +77,7 @@ public class AnalyticsService {
         metrics.setEasyCount(totalEasy);
         metrics.setMediumCount(totalMedium);
         metrics.setHardCount(totalHard);
-        metrics.setCurrentStreak(maxStreak);
+        metrics.setMaxCurrentStreak(maxStreak);
 
         // Calculate percentages
         if (totalProblems > 0) {

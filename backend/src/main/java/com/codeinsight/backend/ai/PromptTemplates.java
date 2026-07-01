@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PromptTemplates {
 
-    public String getRecommendationPrompt(String userProfile, String targetCompany) {
+    public static String getRecommendationPrompt(String userProfile, String targetCompany) {
         return """
                 You are an expert coding interview coach. Based on the user's profile below, generate specific interview preparation recommendations.
                 
@@ -25,7 +25,7 @@ public class PromptTemplates {
                 """.formatted(userProfile, targetCompany);
     }
 
-    public String getStudyPlanPrompt(String userProfile, String targetCompany, Integer weeksAvailable) {
+    public static String getStudyPlanPrompt(String userProfile, String targetCompany, Integer weeksAvailable) {
         return """
                 You are an expert coding interview preparation coach. Create a detailed %d-week study plan for a candidate preparing for %s interviews.
                 
@@ -44,7 +44,7 @@ public class PromptTemplates {
                 """.formatted(weeksAvailable, targetCompany, userProfile);
     }
 
-    public String getTopicGuidancePrompt(String topic, String currentLevel, String targetLevel) {
+    public static String getTopicGuidancePrompt(String topic, String currentLevel, String targetLevel) {
         return """
                 You are a DSA (Data Structures & Algorithms) expert. Create a learning guide for mastering %s.
                 
@@ -64,7 +64,7 @@ public class PromptTemplates {
                 """.formatted(topic, currentLevel, targetLevel);
     }
 
-    public String getWeakAreaAnalysisPrompt(String weakTopics, String userStats) {
+    public static String getWeakAreaAnalysisPrompt(String weakTopics, String userStats) {
         return """
                 You are a coding interview coach analyzing a candidate's weak areas.
                 
@@ -86,7 +86,7 @@ public class PromptTemplates {
                 """.formatted(weakTopics, userStats);
     }
 
-    public String getCompanyPreparationPrompt(String company, String userStrengths, String userWeaknesses) {
+    public static String getCompanyPreparationPrompt(String company, String userStrengths, String userWeaknesses) {
         return """
                 You are an expert in %s technical interviews. Tailor interview preparation for this company.
                 

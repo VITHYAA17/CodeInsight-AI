@@ -20,7 +20,7 @@ public class MetricsDTO {
     private BigDecimal mediumPercentage;
     private BigDecimal hardPercentage;
     private BigDecimal averageAcceptanceRate;
-    private Integer currentStreak;
+    private Integer maxCurrentStreak;
     private Integer averageContestRating;
     private Map<String, PlatformMetricsDTO> platformBreakdown = new HashMap<>();
 }

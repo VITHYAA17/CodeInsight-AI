@@ -96,7 +96,7 @@ public class InterviewReadinessService {
         }
 
         // Factor 6: Consistency (max 10 points)
-        Integer streak = metrics.getCurrentStreak() != null ? metrics.getCurrentStreak() : 0;
+        Integer streak = metrics.getMaxCurrentStreak() != null ? metrics.getMaxCurrentStreak() : 0;
         if (streak >= 30) {
             readinessScore += 10;
         } else if (streak >= 14) {

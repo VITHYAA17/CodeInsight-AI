@@ -12,9 +12,9 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InsightsDTO {
-    private Integer interviewReadiness; // 0-100
-    private Map<String, Integer> companyMatch; // Company -> readiness %
-    private List<String> recommendations; // What to focus on
+    private Integer interviewReadinessScore; // 0-100
+    private Map<String, Integer> companyMatchingScores; // Company -> readiness %
+    private List<String> topicStrengths; // What to focus on
     private List<SkillGapDTO> skillGaps; // Weak areas to improve
     private String nextMilestone;
     private String performanceLevel; // Beginner, Intermediate, Advanced, Expert
