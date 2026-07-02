@@ -4,6 +4,13 @@ CodeInsight AI is a premium, feature-rich developer analytics dashboard and inte
 
 ---
 
+## Live Deployments 🌐
+
+- **Frontend App**: [https://codeinsight-frontend-d22s.onrender.com](https://codeinsight-frontend-d22s.onrender.com)
+- **Backend API**: [https://codeinsight-ai-backend-ncxn.onrender.com](https://codeinsight-ai-backend-ncxn.onrender.com)
+
+---
+
 ## Key Features 🌟
 
 - **Dynamic Profile Synchronization**: 
