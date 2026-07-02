@@ -3,67 +3,78 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: var(--bg-app);
+  background: radial-gradient(circle at center, rgba(99, 102, 241, 0.08) 0%, var(--bg-app) 70%);
+  padding: 24px;
 }
 
 .auth-card {
-  background: white;
+  background: #0f172a;
+  border: 1px solid var(--border);
   padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
   width: 100%;
-  max-width: 400px;
+  max-width: 440px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auth-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(99, 102, 241, 0.08);
 }
 
 .auth-card h1 {
   text-align: center;
-  color: #667eea;
-  font-size: 32px;
-  margin-bottom: 10px;
+  font-size: 28px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+  letter-spacing: -0.03em;
 }
 
 .auth-card h2 {
   text-align: center;
-  color: #666;
-  font-size: 24px;
-  margin-bottom: 30px;
-  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 32px;
 }
 
 .auth-card form {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .auth-card .button {
-  width: 100%;
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  height: 46px;
 }
 
 .auth-link {
   text-align: center;
-  color: #666;
+  margin-top: 24px;
+  color: var(--text-light);
   font-size: 14px;
 }
 
 .auth-link a {
-  color: #667eea;
+  color: #818cf8;
   text-decoration: none;
   font-weight: 600;
+  transition: color 0.2s ease;
 }
 
 .auth-link a:hover {
-  text-decoration: underline;
+  color: #c084fc;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 480px) {
   .auth-card {
     padding: 30px 20px;
-  }
-
-  .auth-card h1 {
-    font-size: 28px;
-  }
-
-  .auth-card h2 {
-    font-size: 20px;
   }
 }

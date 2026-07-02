@@ -37,7 +37,9 @@ export const authAPI = {
   login: (data: { email: string; password: string }) =>
     api.post('/auth/login', data),
   getCurrentUser: () =>
-    api.get('/auth/me')
+    api.get('/auth/me'),
+  updateProfile: (data: { name?: string; collegeName?: string; resumeUrl?: string; profilePhoto?: string; contactNumber?: string }) =>
+    api.put('/auth/profile', data)
 }
 
 // Platform APIs
@@ -71,7 +73,13 @@ export const aiAPI = {
   generateStudyPlan: (targetCompany: string, weeksAvailable: number) =>
     api.post('/ai/generate-study-plan', null, {
       params: { targetCompany, weeksAvailable }
-    })
+    }),
+  getStudyPlan: () =>
+    api.get('/ai/study-plan'),
+  toggleStudyPlanTask: (id: number) =>
+    api.put(`/ai/study-plan/${id}/toggle`),
+  getRecommendations: () =>
+    api.get('/ai/recommendations')
 }
 
 export default api

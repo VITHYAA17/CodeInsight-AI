@@ -7,6 +7,10 @@ export interface User {
   email: string
   createdAt: string
   updatedAt: string
+  collegeName?: string | null
+  resumeUrl?: string | null
+  profilePhoto?: string | null
+  contactNumber?: string | null
 }
 
 interface AuthContextType {
@@ -16,6 +20,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>
   register: (name: string, email: string, password: string) => Promise<void>
   logout: () => void
+  updateProfile: (data: { name?: string; collegeName?: string; resumeUrl?: string; profilePhoto?: string; contactNumber?: string }) => Promise<void>
   isAuthenticated: boolean
 }
 
@@ -77,6 +82,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setError(null)
   }
 
+  const updateProfile = async (data: { name?: string; collegeName?: string; resumeUrl?: string; profilePhoto?: string; contactNumber?: string }) => {
+    setError(null)
+    try {
+      const response = await authAPI.updateProfile(data)
+      setUser(response.data.data)
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Profile update failed')
+      throw err
+    }
+  }
+
   const value: AuthContextType = {
     user,
     loading,
@@ -84,6 +100,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     login,
     register,
     logout,
+    updateProfile,
     isAuthenticated: !!user
   }
 
