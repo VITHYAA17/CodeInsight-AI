@@ -143,7 +143,7 @@ const DashboardPage: React.FC = () => {
   const [planWeeks, setPlanWeeks] = useState<number>(4)
   const [planLoading, setPlanLoading] = useState<boolean>(false)
 
-  const [recCompany, setRecCompany] = useState<string>('Google')
+  const [recCompany, setRecCompany] = useState<string>('Core DSA Mastery')
   const [recLoading, setRecLoading] = useState<boolean>(false)
 
   useEffect(() => {
@@ -704,26 +704,26 @@ const DashboardPage: React.FC = () => {
         {/* Left Side: Recommendations Detail */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
-            <h3 style={{ fontSize: '20px', fontWeight: 600 }}>AI Coach Recommendations</h3>
-            <p style={{ color: '#64748b', fontSize: '14px' }}>Actionable advice based on interview targets.</p>
+            <h3 style={{ fontSize: '20px', fontWeight: 600 }}>AI DSA Insights & Recommendations</h3>
+            <p style={{ color: '#94a3b8', fontSize: '14px' }}>Actionable advice based on your solved problem statistics, strengths, and gaps.</p>
           </div>
 
           {formSuccess && <div className="alert alert-success">{formSuccess}</div>}
 
           {!latestRecommendation ? (
             <div className="card" style={{ padding: '40px', textAlign: 'center' }}>
-              <h4 style={{ fontSize: '16px', marginBottom: '8px' }}>No recommendations active</h4>
-              <p style={{ color: '#64748b', fontSize: '14px' }}>Generate tailored guidance using the panel on the right.</p>
+              <h4 style={{ fontSize: '16px', marginBottom: '8px' }}>No insights active</h4>
+              <p style={{ color: '#94a3b8', fontSize: '14px' }}>Generate tailored guidance using the panel on the right.</p>
             </div>
           ) : (
             <div className="card">
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '12px', marginBottom: '20px' }}>
                 <div>
-                  <h4 style={{ fontSize: '18px' }}>Target: {latestRecommendation.targetCompany}</h4>
+                  <h4 style={{ fontSize: '18px' }}>Focus Goal: {latestRecommendation.targetCompany}</h4>
                   <span style={{ fontSize: '12px', color: '#94a3b8' }}>Generated on {new Date(latestRecommendation.generatedAt).toLocaleDateString()}</span>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <span style={{ fontSize: '12px', color: '#94a3b8', display: 'block' }}>Readiness Score</span>
+                  <span style={{ fontSize: '12px', color: '#94a3b8', display: 'block' }}>DSA Strength Index</span>
                   <span style={{ fontSize: '20px', fontWeight: 700, color: '#60a5fa' }}>{latestRecommendation.interviewReadiness}%</span>
                 </div>
               </div>
@@ -737,25 +737,25 @@ const DashboardPage: React.FC = () => {
         {/* Right Side: Generator Form */}
         <div>
           <div className="card">
-            <h4 style={{ fontSize: '16px', marginBottom: '16px' }}>Generate Tailored Analysis</h4>
+            <h4 style={{ fontSize: '16px', marginBottom: '16px' }}>Generate Skill Analysis</h4>
             <form onSubmit={handleGenerateRecommendations} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label htmlFor="recCompany">Target Company</label>
+                <label htmlFor="recCompany">Select Focus Goal</label>
                 <select
                   id="recCompany"
                   value={recCompany}
                   onChange={(e) => setRecCompany(e.target.value)}
                 >
-                  <option value="Google">Google</option>
-                  <option value="Amazon">Amazon</option>
-                  <option value="Microsoft">Microsoft</option>
-                  <option value="Meta">Meta</option>
-                  <option value="Apple">Apple</option>
+                  <option value="Core DSA Mastery">Core DSA Mastery</option>
+                  <option value="Dynamic Programming & Graphs">Dynamic Programming & Graphs</option>
+                  <option value="Problem Solving Speed & Accuracy">Speed & Accuracy</option>
+                  <option value="Competitive Programming & Contests">Competitive Programming</option>
+                  <option value="Advanced LLD & OOP Design">LLD & OOP Design</option>
                 </select>
               </div>
 
               <button type="submit" className="button button-primary" disabled={recLoading}>
-                {recLoading ? 'Generating Advice...' : 'Get Recommendations'}
+                {recLoading ? 'Analyzing Solved Data...' : 'Get Insights & Recommendations'}
               </button>
             </form>
           </div>
