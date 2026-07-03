@@ -150,6 +150,16 @@ const DashboardPage: React.FC = () => {
     fetchData()
   }, [])
 
+  const formatDate = (dateInput: any) => {
+    if (!dateInput) return 'N/A';
+    if (Array.isArray(dateInput)) {
+      const [year, month, day, hour = 0, minute = 0, second = 0] = dateInput;
+      return new Date(year, month - 1, day, hour, minute, second).toLocaleDateString();
+    }
+    const d = new Date(dateInput);
+    return isNaN(d.getTime()) ? 'N/A' : d.toLocaleDateString();
+  }
+
   const fetchData = async () => {
     setLoading(true)
     try {
@@ -720,7 +730,7 @@ const DashboardPage: React.FC = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '12px', marginBottom: '20px' }}>
                 <div>
                   <h4 style={{ fontSize: '18px' }}>Focus Goal: {latestRecommendation.targetCompany}</h4>
-                  <span style={{ fontSize: '12px', color: '#94a3b8' }}>Generated on {new Date(latestRecommendation.generatedAt).toLocaleDateString()}</span>
+                  <span style={{ fontSize: '12px', color: '#94a3b8' }}>Generated on {formatDate(latestRecommendation.generatedAt)}</span>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <span style={{ fontSize: '12px', color: '#94a3b8', display: 'block' }}>DSA Strength Index</span>
