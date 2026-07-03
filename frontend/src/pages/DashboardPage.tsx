@@ -160,6 +160,97 @@ const DashboardPage: React.FC = () => {
     return isNaN(d.getTime()) ? 'N/A' : d.toLocaleDateString();
   }
 
+  const renderFormattedMarkdown = (text: string) => {
+    if (!text) return null;
+    const lines = text.split('\n');
+    return lines.map((line, index) => {
+      let trimmed = line.trim();
+      if (!trimmed) return <div key={index} style={{ height: '12px' }} />;
+      
+      const parseInlineStyles = (txt: string) => {
+        const parts = [];
+        let currentIndex = 0;
+        const boldItalicRegex = /(\*\*.*?\*\*|\*.*?\*)/g;
+        let match;
+        
+        while ((match = boldItalicRegex.exec(txt)) !== null) {
+          const matchIndex = match.index;
+          const matchStr = match[0];
+          
+          if (matchIndex > currentIndex) {
+            parts.push(txt.substring(currentIndex, matchIndex));
+          }
+          
+          if (matchStr.startsWith('**') && matchStr.endsWith('**')) {
+            parts.push(
+              <strong key={matchIndex} style={{ fontWeight: 700, color: '#ffffff' }}>
+                {matchStr.slice(2, -2)}
+              </strong>
+            );
+          } else if (matchStr.startsWith('*') && matchStr.endsWith('*')) {
+            parts.push(
+              <em key={matchIndex} style={{ fontStyle: 'italic', color: '#94a3b8' }}>
+                {matchStr.slice(1, -1)}
+              </em>
+            );
+          }
+          
+          currentIndex = boldItalicRegex.lastIndex;
+        }
+        
+        if (currentIndex < txt.length) {
+          parts.push(txt.substring(currentIndex));
+        }
+        
+        return parts;
+      };
+
+      if (trimmed.startsWith('### ')) {
+        return (
+          <h4 key={index} style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', marginTop: '20px', marginBottom: '10px' }}>
+            {parseInlineStyles(trimmed.substring(4))}
+          </h4>
+        );
+      }
+      
+      if (trimmed.startsWith('#### ')) {
+        return (
+          <h5 key={index} style={{ fontSize: '15px', fontWeight: 700, color: '#a5b4fc', marginTop: '16px', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            {parseInlineStyles(trimmed.substring(5))}
+          </h5>
+        );
+      }
+      
+      if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+        const content = trimmed.substring(2);
+        return (
+          <div key={index} style={{ display: 'flex', gap: '8px', marginLeft: '12px', marginBottom: '6px', lineHeight: 1.6 }}>
+            <span style={{ color: '#6366f1' }}>•</span>
+            <span style={{ fontSize: '14px', color: '#cbd5e1' }}>{parseInlineStyles(content)}</span>
+          </div>
+        );
+      }
+      
+      const numMatch = trimmed.match(/^(\d+)\.\s(.*)/);
+      if (numMatch) {
+        const num = numMatch[1];
+        const content = numMatch[2];
+        return (
+          <div key={index} style={{ display: 'flex', gap: '8px', marginLeft: '12px', marginBottom: '10px', alignItems: 'flex-start', lineHeight: 1.6 }}>
+            <span style={{ color: '#818cf8', fontWeight: 600, minWidth: '18px' }}>{num}.</span>
+            <span style={{ fontSize: '14px', color: '#cbd5e1' }}>{parseInlineStyles(content)}</span>
+          </div>
+        );
+      }
+      
+      return (
+        <p key={index} style={{ fontSize: '14px', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '12px' }}>
+          {parseInlineStyles(trimmed)}
+        </p>
+      );
+    });
+  };
+
   const fetchData = async () => {
     setLoading(true)
     try {
@@ -737,8 +828,8 @@ const DashboardPage: React.FC = () => {
                   <span style={{ fontSize: '20px', fontWeight: 700, color: '#60a5fa' }}>{latestRecommendation.interviewReadiness}%</span>
                 </div>
               </div>
-              <div style={{ whiteSpace: 'pre-wrap', fontSize: '14px', lineHeight: 1.6, color: '#ffffff' }}>
-                {latestRecommendation.recommendationText}
+              <div style={{ fontSize: '14px', lineHeight: 1.6, color: '#ffffff' }}>
+                {renderFormattedMarkdown(latestRecommendation.recommendationText)}
               </div>
             </div>
           )}
