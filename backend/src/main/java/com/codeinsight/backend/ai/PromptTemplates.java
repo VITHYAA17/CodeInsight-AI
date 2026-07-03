@@ -5,24 +5,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class PromptTemplates {
 
-    public static String getRecommendationPrompt(String userProfile, String targetCompany) {
+    public static String getRecommendationPrompt(String userProfile, String focusGoal) {
         return """
-                You are an expert coding interview coach. Based on the user's profile below, generate specific interview preparation recommendations.
+                You are an expert DSA (Data Structures & Algorithms) and competitive programming coach.
+                Analyze the user's solved problem statistics, DSA topic strength scores, acceptance rates, coding streak, and skill gaps to provide highly customized insights and actionable recommendations to improve their overall problem-solving and DSA skills.
                 
-                USER PROFILE:
+                USER PERFORMANCE DATA:
                 %s
                 
-                TARGET COMPANY: %s
+                USER'S TARGET GOAL: %s
                 
                 Provide:
-                1. Top 3 areas to focus on
-                2. Estimated time to prepare (in weeks)
-                3. Specific topics to master
-                4. Practice problem suggestions
-                5. Daily schedule recommendation
+                1. Performance Analysis: Detail the user's current strengths and weaknesses based on their solved problems, difficulty ratio (Easy/Medium/Hard), and topic mastery.
+                2. Customized Practice Strategy: Concrete next steps to balance their difficulty ratio (e.g., transitioning from Easy to Medium) and master their weak topics.
+                3. Topic Mastery Roadmap: Recommended sequence of DSA topics they should practice next based on their gaps.
+                4. Actionable Daily/Weekly Checklist: A concrete roadmap (e.g., number of problems, specific patterns to master) to optimize their problem-solving efficiency and consistency.
                 
-                Format the response clearly with headers and bullet points. Be specific and actionable.
-                """.formatted(userProfile, targetCompany);
+                Format the response clearly in Markdown with visual headers, key stats highlighted, and bullet points. Be extremely specific, analytical, and actionable. Do not use generic advice.
+                """.formatted(userProfile, focusGoal);
     }
 
     public static String getStudyPlanPrompt(String userProfile, String targetCompany, Integer weeksAvailable) {
