@@ -42,7 +42,7 @@ const RegisterPage: React.FC = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>CodeInsight AI</h1>
+        <h1>CodeInsight.AI</h1>
         <h2>Register</h2>
         
         {error && <div className="alert alert-error">{error}</div>}

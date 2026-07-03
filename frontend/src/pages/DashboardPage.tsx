@@ -401,10 +401,10 @@ const DashboardPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', backgroundColor: '#080c14' }}>
+      <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', backgroundColor: 'var(--bg-app)' }}>
         <div style={{ textAlign: 'center' }}>
           <div className="spinner" style={{ width: '40px', height: '40px', borderWidth: '3px' }}></div>
-          <p style={{ marginTop: '16px', color: '#94a3b8', fontSize: '14px', fontWeight: 500 }}>Loading CodeInsight Dashboard...</p>
+          <p style={{ marginTop: '16px', color: '#94a3b8', fontSize: '14px', fontWeight: 500 }}>Loading CodeInsight.AI Dashboard...</p>
         </div>
       </div>
     )
@@ -1112,7 +1112,7 @@ const DashboardPage: React.FC = () => {
     <div className="dashboard">
       <nav className="navbar">
         <div className="navbar-content">
-          <h1>CodeInsight AI</h1>
+          <h1>CodeInsight.AI</h1>
           <div className="navbar-right">
             <span className="user-name">Welcome, {user?.name}!</span>
             <button onClick={handleLogout} className="button button-secondary" style={{ padding: '8px 14px', fontSize: '13px' }}>
