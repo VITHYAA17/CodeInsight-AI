@@ -37,8 +37,12 @@ public class PerformanceAnalysisService {
 
         // Get strongest and weakest topics
         List<TopicScores> allTopics = topicScoresRepository.findByUserIdOrderByStrengthScoreDesc(userId);
+        List<Statistics> dbStats = statisticsRepository.findByUserId(userId);
+        int currentDbTotalSolved = dbStats.stream().mapToInt(Statistics::getTotalSolved).sum();
+        int currentTopicSolvedSum = allTopics.stream().mapToInt(TopicScores::getProblemsSolved).sum();
         long uniqueCount = allTopics.stream().map(TopicScores::getTopicName).distinct().count();
-        if (allTopics.isEmpty() || uniqueCount < allTopics.size()) {
+        
+        if (allTopics.isEmpty() || uniqueCount < allTopics.size() || currentDbTotalSolved != currentTopicSolvedSum) {
             initializeTopicScores(userId);
             allTopics = topicScoresRepository.findByUserIdOrderByStrengthScoreDesc(userId);
         }
@@ -201,7 +205,7 @@ public class PerformanceAnalysisService {
 
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
 
-        // Define standard topics, solved percentages, and strength scores
+        // Define standard topics, solved percentages, and base strength scores
         Object[][] topicData = {
             {"Arrays & Strings", 0.30, 85},
             {"Sorting & Searching", 0.20, 75},
@@ -211,6 +215,10 @@ public class PerformanceAnalysisService {
             {"Dynamic Programming", 0.08, 35},
             {"Hash Tables", 0.08, 70}
         };
+
+        // Scale strength score based on progress:
+        // A multiplier starting at 0.5 and reaching 1.0 at 250 solved problems
+        double progressMultiplier = 0.5 + (Math.min(250, totalSolved) / 500.0);
 
         int runningSum = 0;
         for (int i = 0; i < topicData.length; i++) {
@@ -228,7 +236,11 @@ public class PerformanceAnalysisService {
             }
             
             ts.setProblemsSolved(Math.max(1, solvedCount));
-            ts.setStrengthScore(new BigDecimal((Integer) topicData[i][2]));
+            
+            int baseStrength = (Integer) topicData[i][2];
+            int scaledStrength = (int) Math.round(baseStrength * progressMultiplier);
+            ts.setStrengthScore(new BigDecimal(Math.min(100, Math.max(10, scaledStrength))));
+            
             ts.setLastUpdated(now);
             ts.setCreatedAt(now);
             ts.setUpdatedAt(now);

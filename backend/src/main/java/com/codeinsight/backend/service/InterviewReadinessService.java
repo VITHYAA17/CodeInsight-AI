@@ -117,8 +117,11 @@ public class InterviewReadinessService {
     public Integer calculateCompanyReadiness(Long userId, String company) {
         MetricsDTO metrics = analyticsService.calculateMetrics(userId);
         List<TopicScores> topics = topicScoresRepository.findByUserId(userId);
+        int currentDbTotalSolved = metrics.getTotalProblems() != null ? metrics.getTotalProblems() : 0;
+        int currentTopicSolvedSum = topics.stream().mapToInt(TopicScores::getProblemsSolved).sum();
         long uniqueCount = topics.stream().map(TopicScores::getTopicName).distinct().count();
-        if (topics.isEmpty() || uniqueCount < topics.size()) {
+        
+        if (topics.isEmpty() || uniqueCount < topics.size() || currentDbTotalSolved != currentTopicSolvedSum) {
             initializeTopicScores(userId);
             topics = topicScoresRepository.findByUserId(userId);
         }
@@ -205,6 +208,10 @@ public class InterviewReadinessService {
             {"Hash Tables", 0.08, 70}
         };
 
+        // Scale strength score based on progress:
+        // A multiplier starting at 0.5 and reaching 1.0 at 250 solved problems
+        double progressMultiplier = 0.5 + (Math.min(250, totalSolved) / 500.0);
+
         int runningSum = 0;
         for (int i = 0; i < topicData.length; i++) {
             TopicScores ts = new TopicScores();
@@ -221,7 +228,11 @@ public class InterviewReadinessService {
             }
             
             ts.setProblemsSolved(Math.max(1, solvedCount));
-            ts.setStrengthScore(new BigDecimal((Integer) topicData[i][2]));
+            
+            int baseStrength = (Integer) topicData[i][2];
+            int scaledStrength = (int) Math.round(baseStrength * progressMultiplier);
+            ts.setStrengthScore(new BigDecimal(Math.min(100, Math.max(10, scaledStrength))));
+            
             ts.setLastUpdated(now);
             ts.setCreatedAt(now);
             ts.setUpdatedAt(now);
