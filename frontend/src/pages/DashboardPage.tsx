@@ -207,7 +207,7 @@ const DashboardPage: React.FC = () => {
 
       if (trimmed.startsWith('### ')) {
         return (
-          <h4 key={index} style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', marginTop: '20px', marginBottom: '10px' }}>
+          <h4 key={index} style={{ fontSize: '20px', fontWeight: 700, color: '#ffffff', marginTop: '20px', marginBottom: '10px' }}>
             {parseInlineStyles(trimmed.substring(4))}
           </h4>
         );
@@ -215,7 +215,7 @@ const DashboardPage: React.FC = () => {
       
       if (trimmed.startsWith('#### ')) {
         return (
-          <h5 key={index} style={{ fontSize: '15px', fontWeight: 700, color: '#a5b4fc', marginTop: '16px', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <h5 key={index} style={{ fontSize: '16.5px', fontWeight: 700, color: '#a5b4fc', marginTop: '16px', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             {parseInlineStyles(trimmed.substring(5))}
           </h5>
         );
@@ -225,8 +225,8 @@ const DashboardPage: React.FC = () => {
         const content = trimmed.substring(2);
         return (
           <div key={index} style={{ display: 'flex', gap: '8px', marginLeft: '12px', marginBottom: '6px', lineHeight: 1.6 }}>
-            <span style={{ color: '#6366f1' }}>•</span>
-            <span style={{ fontSize: '14px', color: '#cbd5e1' }}>{parseInlineStyles(content)}</span>
+            <span style={{ color: '#6366f1', fontSize: '15.5px' }}>•</span>
+            <span style={{ fontSize: '15.5px', color: '#cbd5e1' }}>{parseInlineStyles(content)}</span>
           </div>
         );
       }
@@ -237,14 +237,14 @@ const DashboardPage: React.FC = () => {
         const content = numMatch[2];
         return (
           <div key={index} style={{ display: 'flex', gap: '8px', marginLeft: '12px', marginBottom: '10px', alignItems: 'flex-start', lineHeight: 1.6 }}>
-            <span style={{ color: '#818cf8', fontWeight: 600, minWidth: '18px' }}>{num}.</span>
-            <span style={{ fontSize: '14px', color: '#cbd5e1' }}>{parseInlineStyles(content)}</span>
+            <span style={{ color: '#818cf8', fontWeight: 600, minWidth: '18px', fontSize: '15.5px' }}>{num}.</span>
+            <span style={{ fontSize: '15.5px', color: '#cbd5e1' }}>{parseInlineStyles(content)}</span>
           </div>
         );
       }
       
       return (
-        <p key={index} style={{ fontSize: '14px', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '12px' }}>
+        <p key={index} style={{ fontSize: '15.5px', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '12px' }}>
           {parseInlineStyles(trimmed)}
         </p>
       );
