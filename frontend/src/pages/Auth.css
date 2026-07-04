@@ -9,7 +9,9 @@
 }
 
 .auth-card {
-  background: #0f172a;
+  background: var(--bg-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border);
   padding: 40px;
   border-radius: var(--radius);

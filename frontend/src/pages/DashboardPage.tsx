@@ -1130,42 +1130,48 @@ const DashboardPage: React.FC = () => {
               className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
               style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
             >
-              📊 Dashboard
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
+              <span>Dashboard</span>
             </button>
             <button
               onClick={() => { setActiveTab('analytics'); setFormSuccess(null); setFormError(null); }}
               className={`nav-item ${activeTab === 'analytics' ? 'active' : ''}`}
               style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
             >
-              📈 Analytics
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>
+              <span>Analytics</span>
             </button>
             <button
               onClick={() => { setActiveTab('study-plan'); setFormSuccess(null); setFormError(null); }}
               className={`nav-item ${activeTab === 'study-plan' ? 'active' : ''}`}
               style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
             >
-              📚 Study Plan
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></svg>
+              <span>Study Plan</span>
             </button>
             <button
               onClick={() => { setActiveTab('recommendations'); setFormSuccess(null); setFormError(null); }}
               className={`nav-item ${activeTab === 'recommendations' ? 'active' : ''}`}
               style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
             >
-              💡 Recommendations
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .3 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><line x1="9" y1="18" x2="15" y2="18" /><line x1="10" y1="22" x2="14" y2="22" /></svg>
+              <span>Recommendations</span>
             </button>
             <button
               onClick={() => { setActiveTab('platforms'); setFormSuccess(null); setFormError(null); }}
               className={`nav-item ${activeTab === 'platforms' ? 'active' : ''}`}
               style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
             >
-              🔗 Platforms
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+              <span>Platforms</span>
             </button>
             <button
               onClick={() => { setActiveTab('settings'); setFormSuccess(null); setFormError(null); }}
               className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`}
               style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
             >
-              ⚙️ Settings
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
+              <span>Settings</span>
             </button>
           </nav>
         </aside>
