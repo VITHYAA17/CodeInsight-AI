@@ -207,7 +207,7 @@ const DashboardPage: React.FC = () => {
 
       if (trimmed.startsWith('### ')) {
         return (
-          <h4 key={index} style={{ fontSize: '20px', fontWeight: 700, color: '#ffffff', marginTop: '20px', marginBottom: '10px' }}>
+          <h4 key={index} style={{ fontSize: '20px', fontWeight: 700, color: '#ffffff', marginTop: '28px', marginBottom: '14px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '8px' }}>
             {parseInlineStyles(trimmed.substring(4))}
           </h4>
         );
@@ -215,7 +215,7 @@ const DashboardPage: React.FC = () => {
       
       if (trimmed.startsWith('#### ')) {
         return (
-          <h5 key={index} style={{ fontSize: '16.5px', fontWeight: 700, color: '#a5b4fc', marginTop: '16px', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <h5 key={index} style={{ fontSize: '16px', fontWeight: 700, color: '#a5b4fc', marginTop: '20px', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             {parseInlineStyles(trimmed.substring(5))}
           </h5>
         );
@@ -224,7 +224,7 @@ const DashboardPage: React.FC = () => {
       if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
         const content = trimmed.substring(2);
         return (
-          <div key={index} style={{ display: 'flex', gap: '8px', marginLeft: '12px', marginBottom: '6px', lineHeight: 1.6 }}>
+          <div key={index} style={{ display: 'flex', gap: '8px', marginLeft: '12px', marginBottom: '8px', lineHeight: 1.7 }}>
             <span style={{ color: '#6366f1', fontSize: '15.5px' }}>•</span>
             <span style={{ fontSize: '15.5px', color: '#cbd5e1' }}>{parseInlineStyles(content)}</span>
           </div>
@@ -236,7 +236,7 @@ const DashboardPage: React.FC = () => {
         const num = numMatch[1];
         const content = numMatch[2];
         return (
-          <div key={index} style={{ display: 'flex', gap: '8px', marginLeft: '12px', marginBottom: '10px', alignItems: 'flex-start', lineHeight: 1.6 }}>
+          <div key={index} style={{ display: 'flex', gap: '8px', marginLeft: '12px', marginBottom: '12px', alignItems: 'flex-start', lineHeight: 1.7 }}>
             <span style={{ color: '#818cf8', fontWeight: 600, minWidth: '18px', fontSize: '15.5px' }}>{num}.</span>
             <span style={{ fontSize: '15.5px', color: '#cbd5e1' }}>{parseInlineStyles(content)}</span>
           </div>
@@ -244,7 +244,7 @@ const DashboardPage: React.FC = () => {
       }
       
       return (
-        <p key={index} style={{ fontSize: '15.5px', color: '#cbd5e1', lineHeight: 1.6, marginBottom: '12px' }}>
+        <p key={index} style={{ fontSize: '15.5px', color: '#cbd5e1', lineHeight: 1.7, marginBottom: '16px' }}>
           {parseInlineStyles(trimmed)}
         </p>
       );
@@ -828,7 +828,7 @@ const DashboardPage: React.FC = () => {
                   <span style={{ fontSize: '20px', fontWeight: 700, color: '#60a5fa' }}>{latestRecommendation.interviewReadiness}%</span>
                 </div>
               </div>
-              <div style={{ fontSize: '14px', lineHeight: 1.6, color: '#ffffff' }}>
+              <div style={{ fontSize: '15.5px', lineHeight: 1.7, color: '#ffffff' }}>
                 {renderFormattedMarkdown(latestRecommendation.recommendationText)}
               </div>
             </div>
