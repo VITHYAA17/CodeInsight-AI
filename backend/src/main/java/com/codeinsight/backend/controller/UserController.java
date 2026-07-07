@@ -45,4 +45,9 @@ public class UserController {
         UserResponse updated = service.updateProfile(email, request);
         return ResponseEntity.ok(new ApiResponse(true, "Profile updated successfully", updated));
     }
+
+    @GetMapping("/health")
+    public ResponseEntity<String> healthCheck() {
+        return ResponseEntity.ok("OK");
+    }
 }
