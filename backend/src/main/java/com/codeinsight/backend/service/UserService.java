@@ -14,7 +14,7 @@ import com.codeinsight.backend.repository.StatisticsRepository;
 import com.codeinsight.backend.repository.UserRepository;
 import com.codeinsight.backend.security.JwtService;
 import com.codeinsight.backend.integration.LeetCodeService;
-import com.codeinsight.backend.integration.CodeforcesService;
+import com.codeinsight.backend.integration.GeeksforGeeksService;
 import com.codeinsight.backend.integration.CodeChefService;
 import com.codeinsight.backend.integration.GitHubService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,7 +34,7 @@ public class UserService {
     private final CodingAccountRepository codingAccountRepository;
     private final StatisticsRepository statisticsRepository;
     private final LeetCodeService leetCodeService;
-    private final CodeforcesService codeforcesService;
+    private final GeeksforGeeksService geeksforGeeksService;
     private final CodeChefService codeChefService;
     private final GitHubService gitHubService;
 
@@ -44,7 +44,7 @@ public class UserService {
                        CodingAccountRepository codingAccountRepository,
                        StatisticsRepository statisticsRepository,
                        LeetCodeService leetCodeService,
-                       CodeforcesService codeforcesService,
+                       GeeksforGeeksService geeksforGeeksService,
                        CodeChefService codeChefService,
                        GitHubService gitHubService) {
         this.userRepository = userRepository;
@@ -53,87 +53,67 @@ public class UserService {
         this.codingAccountRepository = codingAccountRepository;
         this.statisticsRepository = statisticsRepository;
         this.leetCodeService = leetCodeService;
-        this.codeforcesService = codeforcesService;
+        this.geeksforGeeksService = geeksforGeeksService;
         this.codeChefService = codeChefService;
         this.gitHubService = gitHubService;
     }
 
     public ApiResponse register(RegisterRequest request) {
-
         if (userRepository.existsByEmail(request.getEmail())) {
-            return new ApiResponse(false, "Email already exists");
+            return new ApiResponse(false, "Email is already registered");
         }
 
         User user = new User();
-
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
 
-        User savedUser = userRepository.save(user);
+        userRepository.save(user);
 
-        String token = jwtService.generateToken(savedUser.getEmail());
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("token", token);
-
-        UserResponse userResponse = mapToUserResponse(savedUser);
-        data.put("user", userResponse);
-
-        return new ApiResponse(true, "User registered successfully", data);
+        String token = jwtService.generateToken(user.getEmail());
+        return new ApiResponse(true, "Registration successful", new AuthResponse(token, "Registration successful"));
     }
 
     public ApiResponse login(LoginRequest request) {
+        Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid email or password");
+        if (userOpt.isEmpty() || !passwordEncoder.matches(request.getPassword(), userOpt.get().getPassword())) {
+            return new ApiResponse(false, "Invalid email or password");
         }
 
+        User user = userOpt.get();
         String token = jwtService.generateToken(user.getEmail());
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("token", token);
-
-        UserResponse userResponse = mapToUserResponse(user);
-        data.put("user", userResponse);
-
-        return new ApiResponse(true, "Login successful", data);
+        return new ApiResponse(true, "Login successful", new AuthResponse(token, "Login successful"));
     }
 
     public UserResponse getUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         return mapToUserResponse(user);
+    }
+
+    public Long getUserIdByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getId();
     }
 
     public UserResponse updateProfile(String email, UpdateProfileRequest request) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (request.getName() != null) {
-            user.setName(request.getName());
-        }
-        if (request.getCollegeName() != null) {
-            user.setCollegeName(request.getCollegeName());
-        }
-        if (request.getResumeUrl() != null) {
-            user.setResumeUrl(request.getResumeUrl());
-        }
-        if (request.getProfilePhoto() != null) {
-            user.setProfilePhoto(request.getProfilePhoto());
-        }
-        if (request.getContactNumber() != null) {
-            user.setContactNumber(request.getContactNumber());
-        }
+        if (request.getName() != null) user.setName(request.getName());
+        if (request.getCollegeName() != null) user.setCollegeName(request.getCollegeName());
+        if (request.getResumeUrl() != null) user.setResumeUrl(request.getResumeUrl());
+        if (request.getProfilePhoto() != null) user.setProfilePhoto(request.getProfilePhoto());
+        if (request.getContactNumber() != null) user.setContactNumber(request.getContactNumber());
+
         user.setUpdatedAt(LocalDateTime.now());
-        
-        User savedUser = userRepository.save(user);
-        return mapToUserResponse(savedUser);
+        userRepository.save(user);
+
+        return mapToUserResponse(user);
     }
 
     private UserResponse mapToUserResponse(User user) {
@@ -150,12 +130,6 @@ public class UserService {
         );
     }
 
-    public Long getUserIdByEmail(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getId();
-    }
-
     public CodingAccountDTO getCodingAccountByUserId(Long userId) {
         Optional<CodingAccount> account = codingAccountRepository.findByUserId(userId);
         return account.map(this::mapToCodingAccountDTO).orElse(null);
@@ -170,8 +144,8 @@ public class UserService {
             if (ca.getLeetcodeUsername() != null) {
                 leetCodeService.syncUserData(userId, ca.getLeetcodeUsername());
             }
-            if (ca.getCodeforcesUsername() != null) {
-                codeforcesService.syncUserData(userId, ca.getCodeforcesUsername());
+            if (ca.getGeeksforgeeksUsername() != null) {
+                geeksforGeeksService.syncUserData(userId, ca.getGeeksforgeeksUsername());
             }
             if (ca.getCodechefUsername() != null) {
                 codeChefService.syncUserData(userId, ca.getCodechefUsername());

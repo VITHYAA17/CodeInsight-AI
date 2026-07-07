@@ -19,6 +19,7 @@ interface CodingAccount {
   leetcodeUsername?: string | null
   codeforcesUsername?: string | null
   codechefUsername?: string | null
+  geeksforgeeksUsername?: string | null
   githubUsername?: string | null
 }
 
@@ -414,7 +415,7 @@ const DashboardPage: React.FC = () => {
   const renderDashboardOverview = () => {
     if (!metrics) return <p>No statistics connected. Please connect accounts in the "Platforms" tab.</p>
 
-    const hasAccounts = accounts && (accounts.leetcodeUsername || accounts.codeforcesUsername || accounts.codechefUsername || accounts.githubUsername)
+    const hasAccounts = accounts && (accounts.leetcodeUsername || accounts.geeksforgeeksUsername || accounts.codechefUsername || accounts.githubUsername)
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
@@ -485,18 +486,18 @@ const DashboardPage: React.FC = () => {
                       </div>
                     </div>
                   )}
-                  {accounts?.codeforcesUsername && (
+                  {accounts?.geeksforgeeksUsername && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '8px' }}>
                       <div>
-                        <span style={{ fontSize: '14px', fontWeight: 500, display: 'block' }}>Codeforces</span>
-                        <span style={{ fontSize: '12px', color: '#64748b' }}>{accounts.codeforcesUsername}</span>
+                        <span style={{ fontSize: '14px', fontWeight: 500, display: 'block' }}>GeeksforGeeks</span>
+                        <span style={{ fontSize: '12px', color: '#64748b' }}>{accounts.geeksforgeeksUsername}</span>
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <span style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a', display: 'block' }}>
-                          {metrics?.platformBreakdown?.['codeforces']?.totalSolved ?? 0} solved
+                          {metrics?.platformBreakdown?.['geeksforgeeks']?.totalSolved ?? 0} solved
                         </span>
                         <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 500 }}>
-                          🔥 {metrics?.platformBreakdown?.['codeforces']?.currentStreak ?? 0} day streak
+                          🔥 {metrics?.platformBreakdown?.['geeksforgeeks']?.currentStreak ?? 0} day streak
                         </span>
                       </div>
                     </div>
@@ -890,9 +891,9 @@ const DashboardPage: React.FC = () => {
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #f1f5f9' }}>
-                <span style={{ fontSize: '14px', fontWeight: 600 }}>Codeforces</span>
-                <span style={{ fontSize: '14px', color: accounts?.codeforcesUsername ? '#0f172a' : '#94a3b8' }}>
-                  {accounts?.codeforcesUsername || 'Not connected'}
+                <span style={{ fontSize: '14px', fontWeight: 600 }}>GeeksforGeeks</span>
+                <span style={{ fontSize: '14px', color: accounts?.geeksforgeeksUsername ? '#0f172a' : '#94a3b8' }}>
+                  {accounts?.geeksforgeeksUsername || 'Not connected'}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #f1f5f9' }}>
@@ -924,7 +925,7 @@ const DashboardPage: React.FC = () => {
                   onChange={(e) => setConnectPlatform(e.target.value)}
                 >
                   <option value="leetcode">LeetCode</option>
-                  <option value="codeforces">Codeforces</option>
+                  <option value="geeksforgeeks">GeeksforGeeks</option>
                   <option value="codechef">CodeChef</option>
                   <option value="github">GitHub</option>
                 </select>

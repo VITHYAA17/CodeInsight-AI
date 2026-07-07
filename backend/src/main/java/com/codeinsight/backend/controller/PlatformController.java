@@ -4,7 +4,7 @@ import com.codeinsight.backend.dto.ApiResponse;
 import com.codeinsight.backend.dto.ConnectPlatformRequest;
 import com.codeinsight.backend.dto.StatisticsDTO;
 import com.codeinsight.backend.integration.CodeChefService;
-import com.codeinsight.backend.integration.CodeforcesService;
+import com.codeinsight.backend.integration.GeeksforGeeksService;
 import com.codeinsight.backend.integration.GitHubService;
 import com.codeinsight.backend.integration.LeetCodeService;
 import com.codeinsight.backend.service.UserService;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,18 +22,18 @@ public class PlatformController {
 
     private final UserService userService;
     private final LeetCodeService leetCodeService;
-    private final CodeforcesService codeforcesService;
+    private final GeeksforGeeksService geeksforGeeksService;
     private final CodeChefService codeChefService;
     private final GitHubService gitHubService;
 
     public PlatformController(UserService userService,
                             LeetCodeService leetCodeService,
-                            CodeforcesService codeforcesService,
+                            GeeksforGeeksService geeksforGeeksService,
                             CodeChefService codeChefService,
                             GitHubService gitHubService) {
         this.userService = userService;
         this.leetCodeService = leetCodeService;
-        this.codeforcesService = codeforcesService;
+        this.geeksforGeeksService = geeksforGeeksService;
         this.codeChefService = codeChefService;
         this.gitHubService = gitHubService;
     }
@@ -48,8 +47,9 @@ public class PlatformController {
             case "leetcode":
                 leetCodeService.connectAccount(userId, request.getUsername());
                 break;
-            case "codeforces":
-                codeforcesService.connectAccount(userId, request.getUsername());
+            case "geeksforgeeks":
+            case "gfg":
+                geeksforGeeksService.connectAccount(userId, request.getUsername());
                 break;
             case "codechef":
                 codeChefService.connectAccount(userId, request.getUsername());
@@ -75,8 +75,9 @@ public class PlatformController {
             case "leetcode":
                 stats = leetCodeService.getUserStatistics(userId);
                 break;
-            case "codeforces":
-                stats = codeforcesService.getUserStatistics(userId);
+            case "geeksforgeeks":
+            case "gfg":
+                stats = geeksforGeeksService.getUserStatistics(userId);
                 break;
             case "codechef":
                 stats = codeChefService.getUserStatistics(userId);
@@ -113,7 +114,7 @@ public class PlatformController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("leetcode", leetCodeService.getUserStatistics(userId));
-        response.put("codeforces", codeforcesService.getUserStatistics(userId));
+        response.put("geeksforgeeks", geeksforGeeksService.getUserStatistics(userId));
         response.put("codechef", codeChefService.getUserStatistics(userId));
         response.put("github", gitHubService.getUserStatistics(userId));
 
