@@ -30,46 +30,7 @@ Note: Since the services are hosted on Render's free tier, there might be a 50-9
 - **Backend**: Java 21, Spring Boot 3.x, Spring Data JPA, Hibernate, Spring Security with JWT tokens, and PostgreSQL.
 - **Frontend**: React 18, TypeScript, Vite, Recharts for charts, and custom CSS for a dark glassmorphic UI.
 
----
 
-## How to Set It Up Locally
-
-If you want to run this project on your local machine, here are the steps to get both the backend and frontend up and running.
-
-### Prerequisites
-Make sure you have these installed on your system:
-- Java Development Kit (JDK) 21 or later
-- Node.js (v18 or later)
-- PostgreSQL Server running on port 5432 (create a database named `codeinsight`)
-
-### 1. Set Up the Database
-Open the backend configuration file at `backend/src/main/resources/application.yaml` and update the database credentials to match your local PostgreSQL setup:
-```yaml
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/codeinsight
-    username: postgres
-    password: YourPostgresPassword
-```
-
-### 2. Run the Spring Boot Backend
-Open your terminal, navigate to the `backend` folder, and start the Spring Boot server using the Maven wrapper:
-```cmd
-cd backend
-mvnw.cmd spring-boot:run
-```
-The server will boot up, automatically generate the database schema tables, and start listening for API requests on http://localhost:8080.
-
-### 3. Run the React Frontend
-Open a separate terminal window, navigate to the `frontend` folder, install the package dependencies, and start the Vite development server:
-```cmd
-cd frontend
-npm install
-npm run dev
-```
-Once it starts, open http://localhost:5173 in your web browser to view the application.
-
----
 
 ## Styling and Themes
 
