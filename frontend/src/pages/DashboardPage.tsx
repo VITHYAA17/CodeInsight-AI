@@ -255,31 +255,31 @@ const DashboardPage: React.FC = () => {
   const fetchData = async () => {
     setLoading(true)
     try {
-      const [
-        accountsRes,
-        metricsRes,
-        performanceRes,
-        insightsRes,
-        studyPlanRes,
-        recommendationRes
-      ] = await Promise.all([
+      // Step 1: Fetch primary account & metrics first to unblock UI rendering instantly
+      const [accountsRes, metricsRes] = await Promise.all([
         platformAPI.getAccounts(),
-        analyticsAPI.getMetrics(),
-        analyticsAPI.getPerformance(),
-        analyticsAPI.getInsights(),
-        aiAPI.getStudyPlan(),
-        aiAPI.getRecommendations()
+        analyticsAPI.getMetrics()
       ])
 
       setAccounts(accountsRes.data)
       setMetrics(metricsRes.data)
-      setPerformance(performanceRes.data)
-      setInsights(insightsRes.data)
-      setStudyPlans(studyPlanRes.data.data || [])
-      setRecommendations(recommendationRes.data.data || [])
+      setLoading(false) // Dashboard loads instantly!
+
+      // Step 2: Fetch remaining analytics & AI recommendations asynchronously in background
+      Promise.all([
+        analyticsAPI.getPerformance(),
+        analyticsAPI.getInsights(),
+        aiAPI.getStudyPlan(),
+        aiAPI.getRecommendations()
+      ]).then(([performanceRes, insightsRes, studyPlanRes, recommendationRes]) => {
+        setPerformance(performanceRes.data)
+        setInsights(insightsRes.data)
+        setStudyPlans(studyPlanRes.data.data || [])
+        setRecommendations(recommendationRes.data.data || [])
+      }).catch(err => console.error('Error fetching secondary analytics:', err))
+
     } catch (err) {
       console.error('Error fetching dashboard data:', err)
-    } finally {
       setLoading(false)
     }
   }
