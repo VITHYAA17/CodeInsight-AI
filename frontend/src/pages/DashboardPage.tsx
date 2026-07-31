@@ -102,6 +102,14 @@ interface Recommendation {
 const DashboardPage: React.FC = () => {
   const { user, logout, updateProfile } = useAuth()
   const [activeTab, setActiveTab] = useState<string>('dashboard')
+  const [loadingMessage, setLoadingMessage] = useState('Loading CodeInsight.AI Dashboard...')
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoadingMessage("Waking up the database server container... Since we are on Render's free tier, this initial boot-up takes about 50 seconds. Thanks for your patience! Once awake, all subsequent dashboard elements will open instantly.")
+    }, 3500)
+    return () => clearTimeout(timer)
+  }, [])
 
   // Profile settings inputs
   const [profileName, setProfileName] = useState<string>('')
@@ -402,10 +410,10 @@ const DashboardPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', backgroundColor: 'var(--bg-app)' }}>
-        <div style={{ textAlign: 'center' }}>
-          <div className="spinner" style={{ width: '40px', height: '40px', borderWidth: '3px' }}></div>
-          <p style={{ marginTop: '16px', color: '#94a3b8', fontSize: '14px', fontWeight: 500 }}>Loading CodeInsight.AI Dashboard...</p>
+      <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', backgroundColor: 'var(--bg-app)', padding: '24px' }}>
+        <div style={{ textAlign: 'center', maxWidth: '480px' }}>
+          <div className="spinner" style={{ width: '40px', height: '40px', borderWidth: '3px', margin: '0 auto 16px auto' }}></div>
+          <p style={{ color: '#94a3b8', fontSize: '14px', lineHeight: 1.6, fontWeight: 500 }}>{loadingMessage}</p>
         </div>
       </div>
     )
