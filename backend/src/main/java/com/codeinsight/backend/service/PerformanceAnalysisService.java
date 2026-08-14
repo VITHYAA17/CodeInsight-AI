@@ -42,7 +42,7 @@ public class PerformanceAnalysisService {
         int currentTopicSolvedSum = allTopics.stream().mapToInt(TopicScores::getProblemsSolved).sum();
         long uniqueCount = allTopics.stream().map(TopicScores::getTopicName).distinct().count();
         
-        if (allTopics.isEmpty() || uniqueCount < allTopics.size() || currentDbTotalSolved != currentTopicSolvedSum) {
+        if (allTopics.isEmpty() || uniqueCount < allTopics.size() || (currentDbTotalSolved > 0 && currentDbTotalSolved != currentTopicSolvedSum)) {
             initializeTopicScores(userId);
             allTopics = topicScoresRepository.findByUserIdOrderByStrengthScoreDesc(userId);
         }
@@ -220,6 +220,7 @@ public class PerformanceAnalysisService {
         // A multiplier starting at 0.5 and reaching 1.0 at 250 solved problems
         double progressMultiplier = 0.5 + (Math.min(250, totalSolved) / 500.0);
 
+        List<TopicScores> topicsToSave = new ArrayList<>();
         int runningSum = 0;
         for (int i = 0; i < topicData.length; i++) {
             TopicScores ts = new TopicScores();
@@ -244,7 +245,8 @@ public class PerformanceAnalysisService {
             ts.setLastUpdated(now);
             ts.setCreatedAt(now);
             ts.setUpdatedAt(now);
-            topicScoresRepository.save(ts);
+            topicsToSave.add(ts);
         }
+        topicScoresRepository.saveAll(topicsToSave);
     }
 }
