@@ -91,6 +91,10 @@ public class AnalyticsService {
             metrics.setHardPercentage(
                     new BigDecimal(totalHard).divide(total, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100))
             );
+        } else {
+            metrics.setEasyPercentage(BigDecimal.ZERO);
+            metrics.setMediumPercentage(BigDecimal.ZERO);
+            metrics.setHardPercentage(BigDecimal.ZERO);
         }
 
         // Calculate average acceptance rate
@@ -98,19 +102,21 @@ public class AnalyticsService {
             metrics.setAverageAcceptanceRate(
                     totalAcceptance.divide(new BigDecimal(platformCount), 2, RoundingMode.HALF_UP)
             );
+        } else {
+            metrics.setAverageAcceptanceRate(BigDecimal.ZERO);
         }
 
         // Calculate average contest rating
-        if (!allStats.isEmpty()) {
-            int nonNullRatings = 0;
-            for (Statistics stat : allStats) {
-                if (stat.getContestRating() != null) {
-                    nonNullRatings++;
-                }
+        int nonNullRatings = 0;
+        for (Statistics stat : allStats) {
+            if (stat.getContestRating() != null) {
+                nonNullRatings++;
             }
-            if (nonNullRatings > 0) {
-                metrics.setAverageContestRating(totalRating / nonNullRatings);
-            }
+        }
+        if (nonNullRatings > 0) {
+            metrics.setAverageContestRating(totalRating / nonNullRatings);
+        } else {
+            metrics.setAverageContestRating(0);
         }
 
         return metrics;

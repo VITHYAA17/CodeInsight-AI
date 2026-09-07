@@ -12,15 +12,15 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MetricsDTO {
-    private Integer totalProblems;
-    private Integer easyCount;
-    private Integer mediumCount;
-    private Integer hardCount;
-    private BigDecimal easyPercentage;
-    private BigDecimal mediumPercentage;
-    private BigDecimal hardPercentage;
-    private BigDecimal averageAcceptanceRate;
-    private Integer maxCurrentStreak;
-    private Integer averageContestRating;
+    private Integer totalProblems = 0;
+    private Integer easyCount = 0;
+    private Integer mediumCount = 0;
+    private Integer hardCount = 0;
+    private BigDecimal easyPercentage = BigDecimal.ZERO;
+    private BigDecimal mediumPercentage = BigDecimal.ZERO;
+    private BigDecimal hardPercentage = BigDecimal.ZERO;
+    private BigDecimal averageAcceptanceRate = BigDecimal.ZERO;
+    private Integer maxCurrentStreak = 0;
+    private Integer averageContestRating = 0;
     private Map<String, PlatformMetricsDTO> platformBreakdown = new HashMap<>();
 }

@@ -13,9 +13,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleValidationException(MethodArgumentNotValidException ex) {
 
-        String message = ex.getBindingResult()
-                .getFieldError()
-                .getDefaultMessage();
+        String message = ex.getBindingResult().getFieldErrors().stream()
+            .findFirst()
+            .map(error -> error.getDefaultMessage())
+            .orElse("Validation failed");
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

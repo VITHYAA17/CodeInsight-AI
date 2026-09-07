@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@SuppressWarnings("null")
 public class GitHubService implements PlatformService {
 
     private final CodingAccountRepository codingAccountRepository;

@@ -17,7 +17,6 @@ public class CodeChefService implements PlatformService {
     private final CodingAccountRepository codingAccountRepository;
     private final StatisticsRepository statisticsRepository;
 
-    private static final String CODECHEF_API_URL = "https://www.codechef.com/api/v2";
     private static final String PLATFORM_NAME = "codechef";
 
     public CodeChefService(CodingAccountRepository codingAccountRepository,

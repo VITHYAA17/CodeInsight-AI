@@ -8,7 +8,6 @@ import com.codeinsight.backend.entity.Recommendation;
 import com.codeinsight.backend.repository.RecommendationRepository;
 import com.codeinsight.backend.repository.StudyPlanRepository;
 import com.codeinsight.backend.entity.StudyPlan;
-import com.codeinsight.backend.entity.Recommendation;
 import com.codeinsight.backend.security.SecurityUtil;
 import com.codeinsight.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +22,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/ai")
 @Tag(name = "AI Services", description = "AI-powered recommendations and study plans")
+@SuppressWarnings("null")
 public class AiController {
 
     private final RecommendationGeneratorService recommendationGeneratorService;

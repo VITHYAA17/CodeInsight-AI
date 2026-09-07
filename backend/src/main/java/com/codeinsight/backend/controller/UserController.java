@@ -1,13 +1,12 @@
 package com.codeinsight.backend.controller;
 
 import com.codeinsight.backend.dto.ApiResponse;
-import com.codeinsight.backend.dto.AuthResponse;
 import com.codeinsight.backend.dto.LoginRequest;
 import com.codeinsight.backend.dto.RegisterRequest;
 import com.codeinsight.backend.dto.UserResponse;
 import com.codeinsight.backend.dto.UpdateProfileRequest;
 import com.codeinsight.backend.service.UserService;
-import com.codeinsight.backend.util.SecurityUtil;
+import com.codeinsight.backend.security.SecurityUtil;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +23,20 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(service.register(request));
+        ApiResponse response = service.register(request);
+        if (!response.isSuccess()) {
+            return ResponseEntity.badRequest().body(response);
+        }
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(service.login(request));
+        ApiResponse response = service.login(request);
+        if (!response.isSuccess()) {
+            return ResponseEntity.status(401).body(response);
+        }
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/me")

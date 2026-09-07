@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@SuppressWarnings("null")
 public class PerformanceAnalysisService {
 
     private final TopicScoresRepository topicScoresRepository;

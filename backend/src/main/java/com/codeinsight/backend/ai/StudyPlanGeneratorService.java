@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 @Service
 @Transactional
+@SuppressWarnings("null")
 public class StudyPlanGeneratorService {
 
     private final LlmService llmService;

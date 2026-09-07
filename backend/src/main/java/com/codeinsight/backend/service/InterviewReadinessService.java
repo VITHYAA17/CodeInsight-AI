@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
+@SuppressWarnings("null")
 public class InterviewReadinessService {
 
     private final AnalyticsService analyticsService;

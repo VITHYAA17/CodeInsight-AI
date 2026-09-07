@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 
 @Service
 @Transactional
+@SuppressWarnings("null")
 public class RecommendationGeneratorService {
 
     private final LlmService llmService;

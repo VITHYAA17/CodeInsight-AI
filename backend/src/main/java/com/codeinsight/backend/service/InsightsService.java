@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@SuppressWarnings("null")
 public class InsightsService {
 
     private final TopicScoresRepository topicScoresRepository;
@@ -75,30 +76,36 @@ public class InsightsService {
     private List<String> generateRecommendations(Long userId, MetricsDTO metrics) {
         List<String> recommendations = new ArrayList<>();
 
+        int totalProblems = metrics.getTotalProblems() != null ? metrics.getTotalProblems() : 0;
+        BigDecimal hardPercentage = metrics.getHardPercentage() != null ? metrics.getHardPercentage() : BigDecimal.ZERO;
+        BigDecimal acceptanceRate = metrics.getAverageAcceptanceRate() != null ? metrics.getAverageAcceptanceRate() : BigDecimal.ZERO;
+        int streak = metrics.getMaxCurrentStreak() != null ? metrics.getMaxCurrentStreak() : 0;
+        Integer contestRating = metrics.getAverageContestRating();
+
         // Based on problem count
-        if (metrics.getTotalProblems() < 100) {
+        if (totalProblems < 100) {
             recommendations.add("🎯 Complete 100+ problems to build strong fundamentals");
-        } else if (metrics.getTotalProblems() < 250) {
+        } else if (totalProblems < 250) {
             recommendations.add("🎯 Aim for 250+ total problems for better coverage");
         }
 
         // Based on difficulty distribution
-        if (metrics.getHardPercentage().compareTo(new BigDecimal(20)) < 0) {
+        if (hardPercentage.compareTo(new BigDecimal(20)) < 0) {
             recommendations.add("💪 Focus on hard-level problems to strengthen advanced concepts");
         }
 
         // Based on acceptance rate
-        if (metrics.getAverageAcceptanceRate().compareTo(new BigDecimal(40)) < 0) {
+        if (acceptanceRate.compareTo(new BigDecimal(40)) < 0) {
             recommendations.add("📈 Improve accuracy - focus on understanding concepts before solving");
         }
 
         // Based on streaks
-        if (metrics.getMaxCurrentStreak() < 7) {
+        if (streak < 7) {
             recommendations.add("🔥 Maintain a consistent coding streak (7+ days)");
         }
 
         // Based on contest participation
-        if (metrics.getAverageContestRating() != null && metrics.getAverageContestRating() < 1500) {
+        if (contestRating != null && contestRating < 1500) {
             recommendations.add("🏆 Participate in more contests to boost ratings");
         }
 

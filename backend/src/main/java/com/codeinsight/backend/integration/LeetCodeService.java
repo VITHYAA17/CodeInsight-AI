@@ -266,10 +266,9 @@ public class LeetCodeService implements PlatformService {
             JsonNode calendarNode = mapper.readTree(calendarJson);
             
             java.util.Set<java.time.LocalDate> codingDays = new java.util.HashSet<>();
-            java.util.Iterator<Map.Entry<String, JsonNode>> fields = calendarNode.fields();
-            while (fields.hasNext()) {
-                Map.Entry<String, JsonNode> entry = fields.next();
-                long timestamp = Long.parseLong(entry.getKey());
+            java.util.Iterator<String> fieldNames = calendarNode.fieldNames();
+            while (fieldNames.hasNext()) {
+                long timestamp = Long.parseLong(fieldNames.next());
                 // Convert UNIX timestamp in seconds to LocalDate
                 java.time.LocalDate date = java.time.Instant.ofEpochSecond(timestamp)
                         .atZone(java.time.ZoneId.systemDefault())

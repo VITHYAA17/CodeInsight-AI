@@ -1,6 +1,7 @@
 package com.codeinsight.backend.ai;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -121,7 +122,8 @@ public class LlmService {
      * Extract content from OpenAI response
      */
     private String extractContent(String response) throws Exception {
-        Map<String, Object> responseMap = objectMapper.readValue(response, Map.class);
+        Map<String, Object> responseMap = objectMapper.readValue(
+            response, new TypeReference<Map<String, Object>>() { });
 
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> choices = (List<Map<String, Object>>) responseMap.get("choices");

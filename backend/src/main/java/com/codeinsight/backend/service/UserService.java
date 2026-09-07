@@ -10,7 +10,6 @@ import com.codeinsight.backend.dto.UpdateProfileRequest;
 import com.codeinsight.backend.entity.CodingAccount;
 import com.codeinsight.backend.entity.User;
 import com.codeinsight.backend.repository.CodingAccountRepository;
-import com.codeinsight.backend.repository.StatisticsRepository;
 import com.codeinsight.backend.repository.UserRepository;
 import com.codeinsight.backend.security.JwtService;
 import com.codeinsight.backend.integration.LeetCodeService;
@@ -21,8 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -32,7 +29,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final CodingAccountRepository codingAccountRepository;
-    private final StatisticsRepository statisticsRepository;
     private final LeetCodeService leetCodeService;
     private final GeeksforGeeksService geeksforGeeksService;
     private final CodeChefService codeChefService;
@@ -42,7 +38,6 @@ public class UserService {
                        PasswordEncoder passwordEncoder,
                        JwtService jwtService,
                        CodingAccountRepository codingAccountRepository,
-                       StatisticsRepository statisticsRepository,
                        LeetCodeService leetCodeService,
                        GeeksforGeeksService geeksforGeeksService,
                        CodeChefService codeChefService,
@@ -51,7 +46,6 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.codingAccountRepository = codingAccountRepository;
-        this.statisticsRepository = statisticsRepository;
         this.leetCodeService = leetCodeService;
         this.geeksforGeeksService = geeksforGeeksService;
         this.codeChefService = codeChefService;

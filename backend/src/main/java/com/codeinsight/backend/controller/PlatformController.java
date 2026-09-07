@@ -8,7 +8,7 @@ import com.codeinsight.backend.integration.GeeksforGeeksService;
 import com.codeinsight.backend.integration.GitHubService;
 import com.codeinsight.backend.integration.LeetCodeService;
 import com.codeinsight.backend.service.UserService;
-import com.codeinsight.backend.util.SecurityUtil;
+import com.codeinsight.backend.security.SecurityUtil;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

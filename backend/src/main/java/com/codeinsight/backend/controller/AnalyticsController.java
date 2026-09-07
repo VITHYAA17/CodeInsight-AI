@@ -7,7 +7,7 @@ import com.codeinsight.backend.service.AnalyticsService;
 import com.codeinsight.backend.service.InsightsService;
 import com.codeinsight.backend.service.PerformanceAnalysisService;
 import com.codeinsight.backend.service.UserService;
-import com.codeinsight.backend.util.SecurityUtil;
+import com.codeinsight.backend.security.SecurityUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
