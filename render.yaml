@@ -8,7 +8,7 @@ services:
       - key: SPRING_DATASOURCE_URL
         fromDatabase:
           name: codeinsight-db
-          property: connectionString
+          property: jdbcUrl
       - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: codeinsight-db
@@ -20,7 +20,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: PORT
-        value: 8080
+        value: "10000"
 
   - type: web
     name: codeinsight-frontend
