@@ -24,6 +24,11 @@ public class BackendApplication {
 		}
 
 		if (dbUrl != null && !dbUrl.isEmpty()) {
+			// When running inside Render, convert any external Render DB hostnames to internal private DNS
+			if (System.getenv("RENDER") != null && dbUrl.contains(".render.com")) {
+				dbUrl = dbUrl.replaceAll("(dpg-[a-zA-Z0-9]+(-[a-zA-Z0-9]+)?)\\.[a-zA-Z0-9.\\-]*render\\.com", "$1");
+			}
+
 			if (dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://")) {
 				try {
 					String uriString = dbUrl.startsWith("postgres://")
@@ -61,6 +66,8 @@ public class BackendApplication {
 				}
 			} else if (!dbUrl.startsWith("jdbc:")) {
 				System.setProperty("spring.datasource.url", "jdbc:" + dbUrl);
+			} else {
+				System.setProperty("spring.datasource.url", dbUrl);
 			}
 		}
 	}
