@@ -12,7 +12,7 @@ spring:
       maximum-pool-size: 5
       minimum-idle: 1
       data-source-properties:
-        sslmode: require
+        sslmode: ${SSL_MODE:prefer}
 
   jpa:
     hibernate:
