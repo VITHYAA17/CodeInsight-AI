@@ -24,9 +24,19 @@ public class BackendApplication {
 		}
 
 		if (dbUrl != null && !dbUrl.isEmpty()) {
-			// When running inside Render, convert any external Render DB hostnames to internal private DNS
+			// If URL contains a Render external domain, check if internal DNS resolves (same region)
 			if (System.getenv("RENDER") != null && dbUrl.contains(".render.com")) {
-				dbUrl = dbUrl.replaceAll("(dpg-[a-zA-Z0-9]+(-[a-zA-Z0-9]+)?)\\.[a-zA-Z0-9.\\-]*render\\.com", "$1");
+				java.util.regex.Matcher m = java.util.regex.Pattern.compile("(dpg-[a-zA-Z0-9]+(-[a-zA-Z0-9]+)?)\\.[a-zA-Z0-9.\\-]*render\\.com").matcher(dbUrl);
+				if (m.find()) {
+					String internalHost = m.group(1);
+					try {
+						java.net.InetAddress.getByName(internalHost);
+						dbUrl = m.replaceFirst(internalHost);
+						System.out.println("[DATABASE] Internal DNS resolved for " + internalHost + " - using private Render network.");
+					} catch (Exception e) {
+						System.out.println("[DATABASE] Internal DNS not reachable for " + internalHost + " (cross-region or not ready) - keeping host as provided.");
+					}
+				}
 			}
 
 			if (dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://")) {
@@ -69,6 +79,8 @@ public class BackendApplication {
 			} else {
 				System.setProperty("spring.datasource.url", dbUrl);
 			}
+
+			System.out.println("[DATABASE] Configured DataSource URL: " + System.getProperty("spring.datasource.url"));
 		}
 	}
 

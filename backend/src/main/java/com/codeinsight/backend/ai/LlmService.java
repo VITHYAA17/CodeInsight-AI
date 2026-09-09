@@ -38,7 +38,7 @@ public class LlmService {
      * Generate content using OpenAI API with default temperature (0.7)
      */
     public String generateContent(String prompt) {
-        return generateContent(prompt, 0.7);
+        return generateContent(prompt, 0.8);
     }
 
     /**
