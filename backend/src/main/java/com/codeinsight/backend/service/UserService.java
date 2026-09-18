@@ -16,6 +16,8 @@ import com.codeinsight.backend.integration.LeetCodeService;
 import com.codeinsight.backend.integration.GeeksforGeeksService;
 import com.codeinsight.backend.integration.CodeChefService;
 import com.codeinsight.backend.integration.GitHubService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -129,6 +131,12 @@ public class UserService {
         return account.map(this::mapToCodingAccountDTO).orElse(null);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "user_metrics", key = "#userId"),
+            @CacheEvict(value = "user_performance", key = "#userId"),
+            @CacheEvict(value = "user_insights", key = "#userId"),
+            @CacheEvict(value = "platform_stats", key = "#userId")
+    })
     public void refreshAllPlatforms(Long userId) {
         Optional<CodingAccount> account = codingAccountRepository.findByUserId(userId);
         

@@ -5,6 +5,7 @@ import com.codeinsight.backend.dto.MetricsDTO;
 import com.codeinsight.backend.dto.SkillGapDTO;
 import com.codeinsight.backend.entity.TopicScores;
 import com.codeinsight.backend.repository.TopicScoresRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -27,6 +28,7 @@ public class InsightsService {
         this.interviewReadinessService = interviewReadinessService;
     }
 
+    @Cacheable(value = "user_insights", key = "#userId")
     public InsightsDTO generateInsights(Long userId) {
         InsightsDTO insights = new InsightsDTO();
 

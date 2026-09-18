@@ -8,6 +8,7 @@ import com.codeinsight.backend.entity.TopicScores;
 import com.codeinsight.backend.repository.ContestHistoryRepository;
 import com.codeinsight.backend.repository.StatisticsRepository;
 import com.codeinsight.backend.repository.TopicScoresRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -33,6 +34,7 @@ public class PerformanceAnalysisService {
         this.contestHistoryRepository = contestHistoryRepository;
     }
 
+    @Cacheable(value = "user_performance", key = "#userId")
     public PerformanceDTO analyzePerformance(Long userId) {
         PerformanceDTO performance = new PerformanceDTO();
 

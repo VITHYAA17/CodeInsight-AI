@@ -4,6 +4,7 @@ import com.codeinsight.backend.dto.MetricsDTO;
 import com.codeinsight.backend.dto.PlatformMetricsDTO;
 import com.codeinsight.backend.entity.Statistics;
 import com.codeinsight.backend.repository.StatisticsRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ public class AnalyticsService {
         this.statisticsRepository = statisticsRepository;
     }
 
+    @Cacheable(value = "user_metrics", key = "#userId")
     public MetricsDTO calculateMetrics(Long userId) {
         List<Statistics> allStats = statisticsRepository.findByUserId(userId);
 

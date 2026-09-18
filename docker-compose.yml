@@ -16,6 +16,17 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: codeinsight-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./backend
@@ -27,10 +38,14 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/codeinsight
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: CodeInsight@123
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       JWT_SECRET: MySuperSecretKeyForCodeInsightAIApplication2026MySuperSecretKey
       PORT: 8080
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
 
   frontend:
