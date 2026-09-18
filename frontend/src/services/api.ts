@@ -80,7 +80,15 @@ export const aiAPI = {
   toggleStudyPlanTask: (id: number) =>
     api.put(`/ai/study-plan/${id}/toggle`),
   getRecommendations: () =>
-    api.get('/ai/recommendations')
+    api.get('/ai/recommendations'),
+  getStreamRecommendationsUrl: (targetCompany: string) => {
+    const token = localStorage.getItem('jwt_token') || ''
+    return `${API_BASE_URL}/ai/stream-recommendations?targetCompany=${encodeURIComponent(targetCompany)}&token=${encodeURIComponent(token)}`
+  },
+  getStreamStudyPlanUrl: (targetCompany: string, weeksAvailable: number) => {
+    const token = localStorage.getItem('jwt_token') || ''
+    return `${API_BASE_URL}/ai/stream-study-plan?targetCompany=${encodeURIComponent(targetCompany)}&weeksAvailable=${weeksAvailable}&token=${encodeURIComponent(token)}`
+  }
 }
 
 export default api

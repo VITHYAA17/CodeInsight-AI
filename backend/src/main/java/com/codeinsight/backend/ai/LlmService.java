@@ -74,6 +74,80 @@ public class LlmService {
     }
 
     /**
+     * Stream content chunk by chunk from OpenAI completions API
+     */
+    public void streamChat(String prompt, double temperature, java.util.function.Consumer<String> onChunk, Runnable onComplete, java.util.function.Consumer<Throwable> onError) {
+        if (this.apiKey == null || this.apiKey.isEmpty()) {
+            onError.accept(new IllegalStateException("OPENAI_API_KEY environment variable is not set"));
+            return;
+        }
+
+        try {
+            java.net.URL url = new java.net.URI(baseUrl + "/chat/completions").toURL();
+            java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Authorization", "Bearer " + apiKey);
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Accept", "text/event-stream");
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(30000);
+
+            Map<String, Object> request = createRequest(prompt, temperature);
+            request.put("stream", true);
+            String jsonBody = objectMapper.writeValueAsString(request);
+
+            try (java.io.OutputStream os = conn.getOutputStream()) {
+                os.write(jsonBody.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            }
+
+            int status = conn.getResponseCode();
+            if (status != 200) {
+                try (java.io.InputStream err = conn.getErrorStream()) {
+                    String errText = err != null ? new String(err.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8) : "HTTP " + status;
+                    onError.accept(new RuntimeException("OpenAI error: " + errText));
+                    return;
+                }
+            }
+
+            try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(conn.getInputStream(), java.nio.charset.StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    line = line.trim();
+                    if (line.isEmpty() || line.startsWith(":")) continue;
+                    if (line.startsWith("data: ")) {
+                        String data = line.substring(6).trim();
+                        if ("[DONE]".equals(data)) {
+                            break;
+                        }
+                        try {
+                            Map<String, Object> map = objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {});
+                            @SuppressWarnings("unchecked")
+                            List<Map<String, Object>> choices = (List<Map<String, Object>>) map.get("choices");
+                            if (choices != null && !choices.isEmpty()) {
+                                @SuppressWarnings("unchecked")
+                                Map<String, Object> delta = (Map<String, Object>) choices.get(0).get("delta");
+                                if (delta != null && delta.containsKey("content")) {
+                                    String chunk = (String) delta.get("content");
+                                    if (chunk != null) {
+                                        onChunk.accept(chunk);
+                                    }
+                                }
+                            }
+                        } catch (Exception parseEx) {
+                            log.debug("Skipping unparseable SSE line: {}", line);
+                        }
+                    }
+                }
+            }
+            onComplete.run();
+        } catch (Exception e) {
+            log.error("Streaming from OpenAI failed: ", e);
+            onError.accept(e);
+        }
+    }
+
+    /**
      * Stream content (returns same as regular for now)
      */
     public String generateStreamContent(String prompt) {

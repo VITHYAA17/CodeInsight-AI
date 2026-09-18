@@ -151,9 +151,13 @@ const DashboardPage: React.FC = () => {
   const [planCompany, setPlanCompany] = useState<string>('Google')
   const [planWeeks, setPlanWeeks] = useState<number>(4)
   const [planLoading, setPlanLoading] = useState<boolean>(false)
+  const [streamingPlan, setStreamingPlan] = useState<boolean>(false)
+  const [streamedPlanText, setStreamedPlanText] = useState<string>('')
 
   const [recCompany, setRecCompany] = useState<string>('Core DSA Mastery')
   const [recLoading, setRecLoading] = useState<boolean>(false)
+  const [streamingRec, setStreamingRec] = useState<boolean>(false)
+  const [streamedRecText, setStreamedRecText] = useState<string>('')
 
   useEffect(() => {
     fetchData()
@@ -334,18 +338,45 @@ const DashboardPage: React.FC = () => {
   const handleGenerateStudyPlan = async (e: React.FormEvent) => {
     e.preventDefault()
     setPlanLoading(true)
+    setStreamingPlan(true)
+    setStreamedPlanText('')
     setFormError(null)
     setFormSuccess(null)
+    setActiveTab('study-plan')
+
     try {
-      const response = await aiAPI.generateStudyPlan(planCompany, planWeeks)
-      setFormSuccess(response.data.message || 'Study plan generated!')
-      // Refresh study plans
-      const studyPlanRes = await aiAPI.getStudyPlan()
-      setStudyPlans(studyPlanRes.data.data || [])
-      setActiveTab('study-plan')
+      const url = aiAPI.getStreamStudyPlanUrl(planCompany, planWeeks)
+      const eventSource = new EventSource(url)
+
+      eventSource.addEventListener('chunk', (event: MessageEvent) => {
+        setStreamedPlanText((prev) => prev + event.data)
+      })
+
+      eventSource.addEventListener('complete', async () => {
+        eventSource.close()
+        setStreamingPlan(false)
+        setPlanLoading(false)
+        setFormSuccess('Study plan generated with Neon pgvector RAG!')
+        try {
+          const studyPlanRes = await aiAPI.getStudyPlan()
+          setStudyPlans(studyPlanRes.data.data || [])
+        } catch (err) {
+          console.error('Failed to reload study plan', err)
+        }
+      })
+
+      eventSource.addEventListener('error', (event) => {
+        console.warn('SSE stream error or fallback, closing stream', event)
+        eventSource.close()
+        setStreamingPlan(false)
+        setPlanLoading(false)
+        aiAPI.getStudyPlan().then((res) => {
+          setStudyPlans(res.data.data || [])
+        }).catch(() => {})
+      })
     } catch (err: any) {
-      setFormError(err.response?.data?.message || 'Failed to generate study plan')
-    } finally {
+      setFormError(err.message || 'Failed to start study plan stream')
+      setStreamingPlan(false)
       setPlanLoading(false)
     }
   }
@@ -374,18 +405,45 @@ const DashboardPage: React.FC = () => {
   const handleGenerateRecommendations = async (e: React.FormEvent) => {
     e.preventDefault()
     setRecLoading(true)
+    setStreamingRec(true)
+    setStreamedRecText('')
     setFormError(null)
     setFormSuccess(null)
+    setActiveTab('recommendations')
+
     try {
-      const response = await aiAPI.generateRecommendations(recCompany)
-      setFormSuccess(response.data.message || 'Recommendations generated!')
-      // Refresh recommendations
-      const recommendationRes = await aiAPI.getRecommendations()
-      setRecommendations(recommendationRes.data.data || [])
-      setActiveTab('recommendations')
+      const url = aiAPI.getStreamRecommendationsUrl(recCompany)
+      const eventSource = new EventSource(url)
+
+      eventSource.addEventListener('chunk', (event: MessageEvent) => {
+        setStreamedRecText((prev) => prev + event.data)
+      })
+
+      eventSource.addEventListener('complete', async () => {
+        eventSource.close()
+        setStreamingRec(false)
+        setRecLoading(false)
+        setFormSuccess('AI Recommendations generated with Neon pgvector RAG!')
+        try {
+          const recommendationRes = await aiAPI.getRecommendations()
+          setRecommendations(recommendationRes.data.data || [])
+        } catch (err) {
+          console.error('Failed to reload recommendations', err)
+        }
+      })
+
+      eventSource.addEventListener('error', (event) => {
+        console.warn('SSE stream error or fallback, closing stream', event)
+        eventSource.close()
+        setStreamingRec(false)
+        setRecLoading(false)
+        aiAPI.getRecommendations().then((res) => {
+          setRecommendations(res.data.data || [])
+        }).catch(() => {})
+      })
     } catch (err: any) {
-      setFormError(err.response?.data?.message || 'Failed to generate recommendations')
-    } finally {
+      setFormError(err.message || 'Failed to start recommendations stream')
+      setStreamingRec(false)
       setRecLoading(false)
     }
   }
@@ -733,6 +791,21 @@ const DashboardPage: React.FC = () => {
 
           {formSuccess && <div className="alert alert-success">{formSuccess}</div>}
 
+          {(streamingPlan || streamedPlanText) && (
+            <div className="card" style={{ border: '1px solid #6366f1', background: 'rgba(99, 102, 241, 0.05)', marginBottom: '14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                <span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 10px #22c55e' }}></span>
+                <strong style={{ color: '#a5b4fc', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  {streamingPlan ? 'Neon pgvector RAG + Real-Time Study Plan Generation...' : 'Generated Study Plan Stream'}
+                </strong>
+              </div>
+              <div style={{ fontSize: '15px', lineHeight: 1.7, color: '#ffffff' }}>
+                {renderFormattedMarkdown(streamedPlanText)}
+                {streamingPlan && <span style={{ display: 'inline-block', width: '2px', height: '18px', background: '#6366f1', marginLeft: '4px', verticalAlign: 'middle', animation: 'blink 1s infinite' }}>|</span>}
+              </div>
+            </div>
+          )}
+
           {Object.keys(weeks).length === 0 ? (
             <div className="card" style={{ padding: '40px', textAlign: 'center' }}>
               <h4 style={{ fontSize: '16px', marginBottom: '8px' }}>No study plan active</h4>
@@ -797,7 +870,7 @@ const DashboardPage: React.FC = () => {
               </div>
 
               <button type="submit" className="button button-primary" disabled={planLoading}>
-                {planLoading ? 'Generating Plan...' : 'Generate Plan'}
+                {planLoading ? 'Streaming Plan...' : 'Generate Plan'}
               </button>
             </form>
           </div>
@@ -820,7 +893,22 @@ const DashboardPage: React.FC = () => {
 
           {formSuccess && <div className="alert alert-success">{formSuccess}</div>}
 
-          {!latestRecommendation ? (
+          {(streamingRec || streamedRecText) && (
+            <div className="card" style={{ border: '1px solid #6366f1', background: 'rgba(99, 102, 241, 0.05)', marginBottom: '14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                <span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 10px #22c55e' }}></span>
+                <strong style={{ color: '#a5b4fc', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  {streamingRec ? 'Neon pgvector RAG + Real-Time AI Generation In Progress...' : 'Latest Live Generation'}
+                </strong>
+              </div>
+              <div style={{ fontSize: '15.5px', lineHeight: 1.7, color: '#ffffff' }}>
+                {renderFormattedMarkdown(streamedRecText)}
+                {streamingRec && <span style={{ display: 'inline-block', width: '2px', height: '18px', background: '#6366f1', marginLeft: '4px', verticalAlign: 'middle', animation: 'blink 1s infinite' }}>|</span>}
+              </div>
+            </div>
+          )}
+
+          {!latestRecommendation && !streamingRec && !streamedRecText ? (
             <div className="card" style={{ padding: '40px', textAlign: 'center' }}>
               <h4 style={{ fontSize: '16px', marginBottom: '8px' }}>No insights active</h4>
               <p style={{ color: '#94a3b8', fontSize: '14px' }}>Generate tailored guidance using the panel on the right.</p>

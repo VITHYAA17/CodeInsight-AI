@@ -12,8 +12,10 @@ import com.codeinsight.backend.security.SecurityUtil;
 import com.codeinsight.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -183,5 +185,102 @@ public class AiController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse(false, e.getMessage()));
         }
+    }
+
+    /**
+     * Real-time SSE streaming endpoint for AI interview recommendations
+     */
+    @GetMapping(value = "/stream-recommendations", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Stream recommendations via SSE", description = "Stream AI interview recommendations chunk-by-chunk in real time")
+    public SseEmitter streamRecommendations(@RequestParam(defaultValue = "Core DSA Mastery") String targetCompany) {
+        SseEmitter emitter = new SseEmitter(180_000L); // 3-minute timeout
+        String userEmail = SecurityUtil.getCurrentUserEmail();
+        Long userId = userService.getUserByEmail(userEmail).getId();
+
+        new Thread(() -> {
+            try {
+                recommendationGeneratorService.streamRecommendations(
+                    userId,
+                    targetCompany,
+                    chunk -> {
+                        try {
+                            emitter.send(SseEmitter.event().name("chunk").data(chunk));
+                        } catch (Exception e) {
+                            emitter.completeWithError(e);
+                        }
+                    },
+                    saved -> {
+                        try {
+                            Map<String, Object> meta = Map.of(
+                                "id", saved.getId(),
+                                "targetCompany", saved.getTargetCompany(),
+                                "interviewReadiness", saved.getInterviewReadiness()
+                            );
+                            emitter.send(SseEmitter.event().name("complete").data(meta));
+                            emitter.complete();
+                        } catch (Exception e) {
+                            emitter.complete();
+                        }
+                    },
+                    err -> {
+                        try {
+                            emitter.send(SseEmitter.event().name("error").data(err.getMessage()));
+                        } catch (Exception ignored) {}
+                        emitter.complete();
+                    }
+                );
+            } catch (Exception e) {
+                emitter.completeWithError(e);
+            }
+        }).start();
+
+        return emitter;
+    }
+
+    /**
+     * Real-time SSE streaming endpoint for AI study plan generation
+     */
+    @GetMapping(value = "/stream-study-plan", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Stream study plan via SSE", description = "Stream week-by-week study plan generation in real time")
+    public SseEmitter streamStudyPlan(@RequestParam(defaultValue = "Google") String targetCompany,
+                                     @RequestParam(defaultValue = "4") Integer weeksAvailable) {
+        SseEmitter emitter = new SseEmitter(180_000L);
+        String userEmail = SecurityUtil.getCurrentUserEmail();
+        Long userId = userService.getUserByEmail(userEmail).getId();
+
+        new Thread(() -> {
+            try {
+                studyPlanGeneratorService.streamStudyPlan(
+                    userId,
+                    targetCompany,
+                    weeksAvailable,
+                    chunk -> {
+                        try {
+                            emitter.send(SseEmitter.event().name("chunk").data(chunk));
+                        } catch (Exception e) {
+                            emitter.completeWithError(e);
+                        }
+                    },
+                    summary -> {
+                        try {
+                            emitter.send(SseEmitter.event().name("complete").data(summary));
+                            emitter.complete();
+                        } catch (Exception e) {
+                            emitter.complete();
+                        }
+                    },
+                    err -> {
+                        try {
+                            emitter.send(SseEmitter.event().name("error").data(err.getMessage()));
+                        } catch (Exception ignored) {}
+                        emitter.complete();
+                    }
+                );
+            } catch (Exception e) {
+                emitter.completeWithError(e);
+            }
+        }).start();
+
+        return emitter;
     }
 }
