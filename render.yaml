@@ -2,6 +2,7 @@ services:
   - type: web
     name: codeinsight-ai-backend
     runtime: docker
+    plan: free
     region: oregon
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
