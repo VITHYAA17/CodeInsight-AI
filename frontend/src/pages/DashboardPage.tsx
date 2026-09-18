@@ -13,6 +13,34 @@ import {
   Tooltip,
   Legend
 } from 'recharts'
+import {
+  LayoutDashboard,
+  TrendingUp,
+  BookOpen,
+  Sparkles,
+  Link2,
+  Settings,
+  LogOut,
+  RefreshCw,
+  Flame,
+  Trophy,
+  Target,
+  Award,
+  CheckCircle2,
+  ExternalLink,
+  Zap,
+  Database,
+  Code2,
+  Terminal,
+  Cpu,
+  User,
+  GraduationCap,
+  Phone,
+  FileText,
+  Clock,
+  ArrowRight,
+  Check
+} from 'lucide-react'
 import './Dashboard.css'
 
 interface CodingAccount {
@@ -485,14 +513,25 @@ const DashboardPage: React.FC = () => {
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Welcome Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <h3 style={{ fontSize: '20px', fontWeight: 600 }}>Overview</h3>
-            <p style={{ color: '#64748b', fontSize: '14px' }}>Aggregated statistics across all connected coding environments.</p>
+            <h3 style={{ fontSize: '24px', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>
+              Welcome back, <span className="gradient-text">{user?.name || 'Developer'}</span> 👋
+            </h3>
+            <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>
+              Unified cross-platform algorithmic intelligence & AI preparation metrics.
+            </p>
           </div>
           {hasAccounts && (
-            <button className="button button-secondary" onClick={handleSyncAll} disabled={syncing}>
-              {syncing ? 'Syncing...' : '🔄 Sync Profiles'}
+            <button
+              className="button button-secondary"
+              onClick={handleSyncAll}
+              disabled={syncing}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13.5px', padding: '9px 18px' }}
+            >
+              <RefreshCw size={15} className={syncing ? 'spinner' : ''} style={syncing ? { border: 'none', animation: 'spin 1s linear infinite' } : {}} />
+              <span>{syncing ? 'Syncing Profiles...' : 'Sync All Profiles'}</span>
             </button>
           )}
         </div>
@@ -500,101 +539,186 @@ const DashboardPage: React.FC = () => {
         {formSuccess && <div className="alert alert-success">{formSuccess}</div>}
 
         {!hasAccounts ? (
-          <div className="card" style={{ textAlign: 'center', padding: '40px 20px' }}>
-            <h4 style={{ fontSize: '18px', marginBottom: '10px' }}>No platforms connected yet</h4>
-            <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '20px' }}>Connect your profiles to aggregate your analytics and trigger AI plans.</p>
-            <button className="button button-primary" onClick={() => setActiveTab('platforms')}>Connect Platforms</button>
+          <div className="card" style={{ textAlign: 'center', padding: '50px 24px', background: 'rgba(15, 23, 42, 0.7)' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(99, 102, 241, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto' }}>
+              <Link2 size={26} color="#818cf8" />
+            </div>
+            <h4 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px' }}>No coding platforms connected yet</h4>
+            <p style={{ color: '#94a3b8', fontSize: '14.5px', maxWidth: '460px', margin: '0 auto 24px auto' }}>
+              Connect your LeetCode, GeeksforGeeks, CodeChef, or GitHub accounts to activate live algorithmic analytics and trigger AI study roadmaps.
+            </p>
+            <button className="button button-primary btn-shimmer" onClick={() => setActiveTab('platforms')} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <span>Connect Platforms Now</span>
+              <ArrowRight size={16} />
+            </button>
           </div>
         ) : (
           <>
             {/* Stats Summary Cards Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
-              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>Total Solved</span>
-                <span style={{ fontSize: '28px', fontWeight: 700 }}>{metrics.totalProblems}</span>
-                <span style={{ fontSize: '12px', color: '#10b981', fontWeight: 500 }}>Active solved count</span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
+              {/* Card 1: Total Solved */}
+              <div className="stat-card-modern">
+                <div className="stat-card-header">
+                  <span className="stat-card-title">Total Solved</span>
+                  <div className="stat-icon-wrapper" style={{ background: 'rgba(16, 185, 129, 0.15)' }}>
+                    <Trophy size={20} color="#10b981" />
+                  </div>
+                </div>
+                <div className="stat-value gradient-text-emerald">{metrics.totalProblems}</div>
+                <div className="stat-subtext">
+                  <span className="badge badge-emerald">
+                    <CheckCircle2 size={11} /> Verified Solves
+                  </span>
+                </div>
               </div>
-              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>Current Streak</span>
-                <span style={{ fontSize: '28px', fontWeight: 700 }}>{metrics.maxCurrentStreak} days</span>
-                <span style={{ fontSize: '12px', color: '#64748b' }}>Longest coding streak</span>
+
+              {/* Card 2: Current Streak */}
+              <div className="stat-card-modern">
+                <div className="stat-card-header">
+                  <span className="stat-card-title">Current Streak</span>
+                  <div className="stat-icon-wrapper" style={{ background: 'rgba(245, 158, 11, 0.15)' }}>
+                    <Flame size={20} color="#f59e0b" />
+                  </div>
+                </div>
+                <div className="stat-value gradient-text-amber">
+                  {metrics.maxCurrentStreak}{' '}
+                  <span style={{ fontSize: '16px', fontWeight: 600, color: '#94a3b8' }}>days</span>
+                </div>
+                <div className="stat-subtext">
+                  <span className="badge badge-amber">🔥 Active Streak</span>
+                </div>
               </div>
-              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>Acceptance Rate</span>
-                <span style={{ fontSize: '28px', fontWeight: 700 }}>{metrics.averageAcceptanceRate}%</span>
-                <span style={{ fontSize: '12px', color: '#64748b' }}>Average solve ratio</span>
+
+              {/* Card 3: Acceptance Rate */}
+              <div className="stat-card-modern">
+                <div className="stat-card-header">
+                  <span className="stat-card-title">Acceptance Rate</span>
+                  <div className="stat-icon-wrapper" style={{ background: 'rgba(6, 182, 212, 0.15)' }}>
+                    <Target size={20} color="#06b6d4" />
+                  </div>
+                </div>
+                <div className="stat-value">{metrics.averageAcceptanceRate}%</div>
+                <div className="stat-subtext">
+                  <span className="badge badge-cyan">
+                    <TrendingUp size={11} /> Average Accuracy
+                  </span>
+                </div>
               </div>
-              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <span style={{ fontSize: '13px', color: '#64748b', fontWeight: 500 }}>Readiness Score</span>
-                <span style={{ fontSize: '28px', fontWeight: 700 }}>{insights?.interviewReadinessScore || 0}/100</span>
-                <span style={{ fontSize: '12px', color: '#3b82f6', fontWeight: 500 }}>{insights?.performanceLevel || 'Beginner'}</span>
+
+              {/* Card 4: Readiness Score */}
+              <div className="stat-card-modern">
+                <div className="stat-card-header">
+                  <span className="stat-card-title">Readiness Score</span>
+                  <div className="stat-icon-wrapper" style={{ background: 'rgba(168, 85, 247, 0.15)' }}>
+                    <Award size={20} color="#a855f7" />
+                  </div>
+                </div>
+                <div className="stat-value gradient-text">
+                  {insights?.interviewReadinessScore || 0}
+                  <span style={{ fontSize: '16px', fontWeight: 600, color: '#94a3b8' }}>/100</span>
+                </div>
+                <div className="stat-subtext">
+                  <span className="badge badge-purple">
+                    <Sparkles size={11} /> {insights?.performanceLevel || 'Beginner'}
+                  </span>
+                </div>
               </div>
             </div>
 
             {/* Platform Profiles & Strengths */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '20px' }}>
               <div className="card">
-                <h4 style={{ fontSize: '16px', marginBottom: '16px' }}>Connected Accounts</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Code2 size={18} color="#818cf8" />
+                    <h4 style={{ fontSize: '16px', margin: 0, fontWeight: 700 }}>Connected Accounts</h4>
+                  </div>
+                  <span className="badge badge-indigo" style={{ fontSize: '10px' }}>Live Sync</span>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {accounts?.leetcodeUsername && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '8px' }}>
-                      <div>
-                        <span style={{ fontSize: '14px', fontWeight: 500, display: 'block' }}>LeetCode</span>
-                        <span style={{ fontSize: '12px', color: '#64748b' }}>{accounts.leetcodeUsername}</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(255, 161, 22, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffa116', fontWeight: 800, fontSize: '14px' }}>
+                          LC
+                        </div>
+                        <div>
+                          <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', display: 'block' }}>LeetCode</span>
+                          <span style={{ fontSize: '12px', color: '#94a3b8' }}>@{accounts.leetcodeUsername}</span>
+                        </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a', display: 'block' }}>
+                        <span style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff', display: 'block' }}>
                           {metrics?.platformBreakdown?.['leetcode']?.totalSolved ?? 0} solved
                         </span>
-                        <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 500 }}>
+                        <span style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 600 }}>
                           🔥 {metrics?.platformBreakdown?.['leetcode']?.currentStreak ?? 0} day streak
                         </span>
                       </div>
                     </div>
                   )}
+
                   {accounts?.geeksforgeeksUsername && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '8px' }}>
-                      <div>
-                        <span style={{ fontSize: '14px', fontWeight: 500, display: 'block' }}>GeeksforGeeks</span>
-                        <span style={{ fontSize: '12px', color: '#64748b' }}>{accounts.geeksforgeeksUsername}</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(16, 185, 129, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', fontWeight: 800, fontSize: '14px' }}>
+                          GFG
+                        </div>
+                        <div>
+                          <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', display: 'block' }}>GeeksforGeeks</span>
+                          <span style={{ fontSize: '12px', color: '#94a3b8' }}>@{accounts.geeksforgeeksUsername}</span>
+                        </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a', display: 'block' }}>
+                        <span style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff', display: 'block' }}>
                           {metrics?.platformBreakdown?.['geeksforgeeks']?.totalSolved ?? 0} solved
                         </span>
-                        <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 500 }}>
+                        <span style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 600 }}>
                           🔥 {metrics?.platformBreakdown?.['geeksforgeeks']?.currentStreak ?? 0} day streak
                         </span>
                       </div>
                     </div>
                   )}
+
                   {accounts?.codechefUsername && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '8px' }}>
-                      <div>
-                        <span style={{ fontSize: '14px', fontWeight: 500, display: 'block' }}>CodeChef</span>
-                        <span style={{ fontSize: '12px', color: '#64748b' }}>{accounts.codechefUsername}</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(168, 85, 247, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c084fc', fontWeight: 800, fontSize: '14px' }}>
+                          CC
+                        </div>
+                        <div>
+                          <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', display: 'block' }}>CodeChef</span>
+                          <span style={{ fontSize: '12px', color: '#94a3b8' }}>@{accounts.codechefUsername}</span>
+                        </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a', display: 'block' }}>
+                        <span style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff', display: 'block' }}>
                           {metrics?.platformBreakdown?.['codechef']?.totalSolved ?? 0} solved
                         </span>
-                        <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 500 }}>
+                        <span style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 600 }}>
                           🔥 {metrics?.platformBreakdown?.['codechef']?.currentStreak ?? 0} day streak
                         </span>
                       </div>
                     </div>
                   )}
+
                   {accounts?.githubUsername && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '8px' }}>
-                      <div>
-                        <span style={{ fontSize: '14px', fontWeight: 500, display: 'block' }}>GitHub</span>
-                        <span style={{ fontSize: '12px', color: '#64748b' }}>{accounts.githubUsername}</span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(99, 102, 241, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a5b4fc', fontWeight: 800, fontSize: '14px' }}>
+                          GH
+                        </div>
+                        <div>
+                          <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', display: 'block' }}>GitHub</span>
+                          <span style={{ fontSize: '12px', color: '#94a3b8' }}>@{accounts.githubUsername}</span>
+                        </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a', display: 'block' }}>
+                        <span style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff', display: 'block' }}>
                           {metrics?.platformBreakdown?.['github']?.totalSolved ?? 0} repos
                         </span>
-                        <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 500 }}>
+                        <span style={{ fontSize: '11px', color: '#f59e0b', fontWeight: 600 }}>
                           🔥 {metrics?.platformBreakdown?.['github']?.currentStreak ?? 0} day streak
                         </span>
                       </div>
@@ -604,16 +728,23 @@ const DashboardPage: React.FC = () => {
               </div>
 
               <div className="card">
-                <h4 style={{ fontSize: '16px', marginBottom: '16px' }}>Coach Recommendations</h4>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Sparkles size={18} color="#a855f7" />
+                    <h4 style={{ fontSize: '16px', margin: 0, fontWeight: 700 }}>Coach Recommendations</h4>
+                  </div>
+                  <span className="badge badge-purple" style={{ fontSize: '10px' }}>AI Advisor</span>
+                </div>
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {insights?.topicStrengths && insights.topicStrengths.map((strength, idx) => (
-                    <div key={idx} style={{ fontSize: '14px', padding: '12px 16px', backgroundColor: 'rgba(255, 255, 255, 0.03)', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.06)', borderLeft: '4px solid #3b82f6', color: '#f8fafc', fontWeight: 500 }}>
+                    <div key={idx} style={{ fontSize: '13.5px', padding: '12px 14px', backgroundColor: 'rgba(99, 102, 241, 0.05)', borderRadius: '10px', border: '1px solid rgba(99, 102, 241, 0.2)', borderLeft: '4px solid #6366f1', color: '#f8fafc', fontWeight: 500 }}>
                       {strength}
                     </div>
                   ))}
                   {insights?.nextMilestone && (
-                    <div style={{ marginTop: '12px', fontSize: '14px', color: '#94a3b8' }}>
-                      <strong>Next milestone:</strong> {insights.nextMilestone}
+                    <div style={{ marginTop: '12px', padding: '12px 14px', borderRadius: '10px', background: 'rgba(245, 158, 11, 0.06)', border: '1px solid rgba(245, 158, 11, 0.2)', fontSize: '13.5px', color: '#fcd34d' }}>
+                      <strong style={{ color: '#ffffff' }}>Target Milestone:</strong> {insights.nextMilestone}
                     </div>
                   )}
                 </div>
@@ -647,32 +778,42 @@ const DashboardPage: React.FC = () => {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
         <div>
-          <h3 style={{ fontSize: '20px', fontWeight: 600 }}>Analytics</h3>
-          <p style={{ color: '#64748b', fontSize: '14px' }}>Deep dive into your strengths and category distribution.</p>
+          <h3 style={{ fontSize: '22px', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>
+            Algorithmic Analytics & Strengths
+          </h3>
+          <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>
+            Deep-dive into difficulty distribution, cross-platform volume, and DSA pattern mastery.
+          </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px' }}>
           {/* Difficulty breakdown */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <h4 style={{ fontSize: '15px' }}>Problems Solved by Difficulty</h4>
-            <div style={{ height: '200px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h4 style={{ fontSize: '15px', fontWeight: 700, margin: 0 }}>Difficulty Breakdown</h4>
+              <span className="badge badge-emerald" style={{ fontSize: '10px' }}>Categorized</span>
+            </div>
+            <div style={{ height: '220px' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={difficultyData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={4}
+                    innerRadius={65}
+                    outerRadius={88}
+                    paddingAngle={5}
                     dataKey="value"
                   >
                     {difficultyData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell key={`cell-${index}`} fill={entry.color} stroke="rgba(0,0,0,0.3)" strokeWidth={2} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [`${value} problems`]} />
-                  <Legend verticalAlign="bottom" height={36} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(99, 102, 241, 0.3)', borderRadius: '10px', color: '#ffffff' }}
+                    formatter={(value) => [`${value} problems`, 'Solved']}
+                  />
+                  <Legend verticalAlign="bottom" height={36} iconType="circle" />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -680,36 +821,45 @@ const DashboardPage: React.FC = () => {
 
           {/* Platform comparison */}
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <h4 style={{ fontSize: '15px' }}>Solved Counts by Platform</h4>
-            <div style={{ height: '200px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h4 style={{ fontSize: '15px', fontWeight: 700, margin: 0 }}>Solved Counts by Platform</h4>
+              <span className="badge badge-indigo" style={{ fontSize: '10px' }}>Aggregated</span>
+            </div>
+            <div style={{ height: '220px' }}>
               {platformComparisonData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={platformComparisonData}>
-                    <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} />
-                    <YAxis stroke="#64748b" fontSize={12} tickLine={false} />
-                    <Tooltip cursor={{ fill: 'rgba(241, 245, 249, 0.5)' }} />
-                    <Bar dataKey="Solved" fill="#2563eb" radius={[4, 4, 0, 0]} />
+                    <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} tickLine={false} />
+                    <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} />
+                    <Tooltip
+                      cursor={{ fill: 'rgba(99, 102, 241, 0.08)' }}
+                      contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(99, 102, 241, 0.3)', borderRadius: '10px', color: '#ffffff' }}
+                    />
+                    <Bar dataKey="Solved" fill="#6366f1" radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>No data</div>
+                <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>No platform data available</div>
               )}
             </div>
           </div>
         </div>
 
         {/* Skill areas */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px' }}>
           <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <h4 style={{ fontSize: '15px' }}>DSA Topics Strength Breakdown</h4>
-            <div style={{ height: '350px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h4 style={{ fontSize: '15px', fontWeight: 700, margin: 0 }}>DSA Topic Strengths</h4>
+              <span className="badge badge-cyan" style={{ fontSize: '10px' }}>Strength Index</span>
+            </div>
+            <div style={{ height: '360px' }}>
               {strongestTopicsData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={strongestTopicsData} layout="vertical">
-                    <XAxis type="number" domain={[0, 100]} stroke="#64748b" fontSize={11} />
-                    <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={11} width={150} />
-                    <Tooltip />
-                    <Bar dataKey="Score" fill="#10b981" radius={[0, 4, 4, 0]} />
+                    <XAxis type="number" domain={[0, 100]} stroke="#94a3b8" fontSize={11} tickLine={false} />
+                    <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={11} width={150} tickLine={false} />
+                    <Tooltip contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '10px', color: '#ffffff' }} />
+                    <Bar dataKey="Score" fill="#10b981" radius={[0, 6, 6, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
@@ -719,49 +869,47 @@ const DashboardPage: React.FC = () => {
           </div>
  
           <div className="card">
-            <h4 style={{ fontSize: '15px', marginBottom: '16px' }}>Topic Gaps Priority</h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h4 style={{ fontSize: '15px', fontWeight: 700, margin: 0 }}>Topic Gaps & Priorities</h4>
+              <span className="badge badge-rose" style={{ fontSize: '10px' }}>Action Items</span>
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {insights?.skillGaps && insights.skillGaps.length > 0 ? (
                 insights.skillGaps.map((gap, index) => (
-                  <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: '6px', borderBottom: '1px solid rgba(255, 255, 255, 0.06)', paddingBottom: '12px' }}>
+                  <div key={index} style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '12px 14px', borderRadius: '12px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
-                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>{gap.topic}</span>
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '2px' }}>
-                          <span style={{
-                            fontSize: '9px',
-                            padding: '1px 5px',
-                            borderRadius: '4px',
-                            fontWeight: 700,
-                            backgroundColor: gap.priority === 'HIGH' ? '#fef2f2' : gap.priority === 'MEDIUM' ? '#fffbeb' : '#f0fdf4',
-                            color: gap.priority === 'HIGH' ? '#ef4444' : gap.priority === 'MEDIUM' ? '#d97706' : '#16a34a',
-                            border: `1px solid ${gap.priority === 'HIGH' ? '#fee2e2' : gap.priority === 'MEDIUM' ? '#fde68a' : '#bbf7d0'}`
-                          }}>
+                        <span style={{ fontSize: '14.5px', fontWeight: 700, color: '#ffffff' }}>{gap.topic}</span>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px' }}>
+                          <span className={gap.priority === 'HIGH' ? 'badge badge-rose' : gap.priority === 'MEDIUM' ? 'badge badge-amber' : 'badge badge-emerald'} style={{ fontSize: '9px', padding: '1px 6px' }}>
                             {gap.priority} PRIORITY
                           </span>
                           <span style={{ fontSize: '11px', color: '#94a3b8' }}>Target: {gap.estimatedDaysToTarget} days</span>
                         </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <span style={{ fontSize: '13px', fontWeight: 700, color: '#ffffff' }}>{gap.currentScore} / {gap.targetScore}</span>
-                        <span style={{ fontSize: '11px', color: '#94a3b8', display: 'block' }}>Score</span>
+                        <span style={{ fontSize: '14px', fontWeight: 800, color: '#ffffff' }}>{gap.currentScore} / {gap.targetScore}</span>
+                        <span style={{ fontSize: '10.5px', color: '#94a3b8', display: 'block' }}>Score</span>
                       </div>
                     </div>
                     
                     {/* Visual Progress Bar */}
-                    <div style={{ width: '100%', height: '6px', backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '3px', overflow: 'hidden', marginTop: '4px' }}>
+                    <div style={{ width: '100%', height: '6px', backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '9999px', overflow: 'hidden', marginTop: '6px' }}>
                       <div style={{ 
                         width: `${Math.min(100, Math.round((gap.currentScore / gap.targetScore) * 100))}%`, 
                         height: '100%', 
-                        backgroundColor: gap.priority === 'HIGH' ? '#ef4444' : gap.priority === 'MEDIUM' ? '#f59e0b' : '#10b981',
-                        borderRadius: '3px',
+                        background: gap.priority === 'HIGH' ? 'linear-gradient(90deg, #ef4444, #f43f5e)' : gap.priority === 'MEDIUM' ? 'linear-gradient(90deg, #f59e0b, #fbbf24)' : 'linear-gradient(90deg, #10b981, #34d399)',
+                        borderRadius: '9999px',
                         transition: 'width 0.5s ease-in-out'
                       }} />
                     </div>
                   </div>
                 ))
               ) : (
-                <p style={{ color: '#94a3b8', fontSize: '13px' }}>Excellent work! No significant skill gaps registered.</p>
+                <div style={{ padding: '30px', textAlign: 'center', color: '#94a3b8' }}>
+                  <CheckCircle2 size={32} color="#10b981" style={{ margin: '0 auto 10px auto' }} />
+                  <p style={{ fontSize: '14px' }}>Excellent work! No critical skill gaps registered.</p>
+                </div>
               )}
             </div>
           </div>
@@ -781,83 +929,143 @@ const DashboardPage: React.FC = () => {
     })
 
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '28px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '28px', alignItems: 'start' }}>
         {/* Left Side: Tasks */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
-            <h3 style={{ fontSize: '20px', fontWeight: 600 }}>Preparation Study Plan</h3>
-            <p style={{ color: '#64748b', fontSize: '14px' }}>Manage and complete week-by-week customized tasks.</p>
+            <h3 style={{ fontSize: '22px', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>
+              Adaptive Preparation Roadmap
+            </h3>
+            <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>
+              Personalized syllabus grounded in your detected weaknesses via PostgreSQL pgvector.
+            </p>
           </div>
 
           {formSuccess && <div className="alert alert-success">{formSuccess}</div>}
 
           {(streamingPlan || streamedPlanText) && (
-            <div className="card" style={{ border: '1px solid #6366f1', background: 'rgba(99, 102, 241, 0.05)', marginBottom: '14px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-                <span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 10px #22c55e' }}></span>
-                <strong style={{ color: '#a5b4fc', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  {streamingPlan ? 'Neon pgvector RAG + Real-Time Study Plan Generation...' : 'Generated Study Plan Stream'}
-                </strong>
+            <div className="ai-stream-box" style={{ marginBottom: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span className="pulse-dot"></span>
+                  <strong style={{ color: '#a5b4fc', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {streamingPlan ? 'Neon pgvector RAG + Real-Time SSE Stream (Sub-50ms)' : 'Generated Study Plan Stream'}
+                  </strong>
+                </div>
+                <span className="badge badge-purple" style={{ fontSize: '10px' }}>
+                  <Database size={10} /> Ground Truth RAG
+                </span>
               </div>
-              <div style={{ fontSize: '15px', lineHeight: 1.7, color: '#ffffff' }}>
+              <div style={{ fontSize: '15px', lineHeight: 1.7, color: '#f8fafc' }}>
                 {renderFormattedMarkdown(streamedPlanText)}
-                {streamingPlan && <span style={{ display: 'inline-block', width: '2px', height: '18px', background: '#6366f1', marginLeft: '4px', verticalAlign: 'middle', animation: 'blink 1s infinite' }}>|</span>}
+                {streamingPlan && <span style={{ display: 'inline-block', width: '2px', height: '18px', background: '#818cf8', marginLeft: '4px', verticalAlign: 'middle', animation: 'blink 1s infinite' }}>|</span>}
               </div>
             </div>
           )}
 
           {Object.keys(weeks).length === 0 ? (
-            <div className="card" style={{ padding: '40px', textAlign: 'center' }}>
-              <h4 style={{ fontSize: '16px', marginBottom: '8px' }}>No study plan active</h4>
-              <p style={{ color: '#64748b', fontSize: '14px' }}>Provide target details in the generator form on the right to start.</p>
+            <div className="card" style={{ padding: '50px 24px', textAlign: 'center', background: 'rgba(15, 23, 42, 0.65)' }}>
+              <div style={{ width: '54px', height: '54px', borderRadius: '16px', background: 'rgba(99, 102, 241, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto' }}>
+                <BookOpen size={24} color="#818cf8" />
+              </div>
+              <h4 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '6px' }}>No active study plan</h4>
+              <p style={{ color: '#94a3b8', fontSize: '14px', maxWidth: '420px', margin: '0 auto 16px auto' }}>
+                Select your target company and weeks on the generator panel to generate a syllabus.
+              </p>
             </div>
           ) : (
-            Object.entries(weeks).map(([week, tasks]) => (
-              <div key={week} className="card" style={{ padding: '20px' }}>
-                <h4 style={{ fontSize: '16px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '8px', marginBottom: '14px' }}>Week {week}</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  {tasks.map(task => (
-                    <label key={task.id} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', cursor: 'pointer' }}>
-                      <input
-                        type="checkbox"
-                        checked={task.status === 'COMPLETED'}
-                        onChange={() => handleToggleTask(task.id)}
-                        style={{ marginTop: '4px', cursor: 'pointer' }}
-                      />
-                      <div style={{ textDecoration: task.status === 'COMPLETED' ? 'line-through' : 'none' }}>
-                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#94a3b8', display: 'block' }}>{task.topicName}</span>
-                        <p style={{ fontSize: '14px', color: task.status === 'COMPLETED' ? '#64748b' : '#ffffff' }}>{task.taskDescription}</p>
+            Object.entries(weeks).map(([week, tasks]) => {
+              const completedCount = tasks.filter(t => t.status === 'COMPLETED').length
+              const progressPct = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0
+
+              return (
+                <div key={week} className="card" style={{ padding: '22px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '12px', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span className="badge badge-indigo">Week {week}</span>
+                      <span style={{ fontSize: '13.5px', color: '#94a3b8' }}>{completedCount} of {tasks.length} tasks completed</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ width: '80px', height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '999px', overflow: 'hidden' }}>
+                        <div style={{ width: `${progressPct}%`, height: '100%', background: '#10b981', borderRadius: '999px' }} />
                       </div>
-                    </label>
-                  ))}
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: progressPct === 100 ? '#10b981' : '#a5b4fc' }}>{progressPct}%</span>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {tasks.map(task => (
+                      <div
+                        key={task.id}
+                        onClick={() => handleToggleTask(task.id)}
+                        style={{
+                          display: 'flex',
+                          gap: '14px',
+                          alignItems: 'flex-start',
+                          cursor: 'pointer',
+                          padding: '10px 12px',
+                          borderRadius: '10px',
+                          background: task.status === 'COMPLETED' ? 'rgba(16, 185, 129, 0.05)' : 'rgba(255, 255, 255, 0.02)',
+                          border: task.status === 'COMPLETED' ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid rgba(255, 255, 255, 0.04)',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <div style={{
+                          width: '20px',
+                          height: '20px',
+                          borderRadius: '6px',
+                          marginTop: '2px',
+                          border: task.status === 'COMPLETED' ? '2px solid #10b981' : '2px solid rgba(255, 255, 255, 0.25)',
+                          background: task.status === 'COMPLETED' ? '#10b981' : 'transparent',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
+                        }}>
+                          {task.status === 'COMPLETED' && <Check size={13} color="#ffffff" strokeWidth={3} />}
+                        </div>
+                        <div style={{ textDecoration: task.status === 'COMPLETED' ? 'line-through' : 'none', opacity: task.status === 'COMPLETED' ? 0.7 : 1 }}>
+                          <span style={{ fontSize: '12.5px', fontWeight: 700, color: '#a5b4fc', display: 'block', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                            {task.topicName}
+                          </span>
+                          <p style={{ fontSize: '14px', color: '#f8fafc', margin: '2px 0 0 0', lineHeight: 1.5 }}>
+                            {task.taskDescription}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))
+              )
+            })
           )}
         </div>
 
         {/* Right Side: Generator Form */}
         <div>
-          <div className="card">
-            <h4 style={{ fontSize: '16px', marginBottom: '16px' }}>Generate New Plan</h4>
+          <div className="card" style={{ position: 'sticky', top: '90px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <Zap size={18} color="#818cf8" />
+              <h4 style={{ fontSize: '16px', margin: 0, fontWeight: 700 }}>Generate Plan</h4>
+            </div>
             <form onSubmit={handleGenerateStudyPlan} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label htmlFor="planCompany">Target Company</label>
+                <label htmlFor="planCompany">Target Company Tier</label>
                 <select
                   id="planCompany"
                   value={planCompany}
                   onChange={(e) => setPlanCompany(e.target.value)}
                 >
-                  <option value="Google">Google</option>
-                  <option value="Amazon">Amazon</option>
-                  <option value="Microsoft">Microsoft</option>
-                  <option value="Meta">Meta</option>
-                  <option value="Apple">Apple</option>
+                  <option value="Google">Google (Graph & DP Focus)</option>
+                  <option value="Amazon">Amazon (Trees & Scalability)</option>
+                  <option value="Microsoft">Microsoft (Arrays & Strings)</option>
+                  <option value="Meta">Meta (Speed & Core Algorithms)</option>
+                  <option value="Apple">Apple (Concurrency & Systems)</option>
                 </select>
               </div>
 
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label htmlFor="planWeeks">Preparation Weeks</label>
+                <label htmlFor="planWeeks">Duration (Weeks)</label>
                 <input
                   id="planWeeks"
                   type="number"
@@ -869,8 +1077,18 @@ const DashboardPage: React.FC = () => {
                 />
               </div>
 
-              <button type="submit" className="button button-primary" disabled={planLoading}>
-                {planLoading ? 'Streaming Plan...' : 'Generate Plan'}
+              <button type="submit" className="button button-primary btn-shimmer" disabled={planLoading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', height: '46px' }}>
+                {planLoading ? (
+                  <>
+                    <span className="spinner" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></span>
+                    <span>Streaming RAG Plan...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={16} />
+                    <span>Generate AI Plan (SSE)</span>
+                  </>
+                )}
               </button>
             </form>
           </div>
@@ -883,49 +1101,66 @@ const DashboardPage: React.FC = () => {
     const latestRecommendation = recommendations[0]
 
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '28px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '28px', alignItems: 'start' }}>
         {/* Left Side: Recommendations Detail */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
-            <h3 style={{ fontSize: '20px', fontWeight: 600 }}>AI DSA Insights & Recommendations</h3>
-            <p style={{ color: '#94a3b8', fontSize: '14px' }}>Actionable advice based on your solved problem statistics, strengths, and gaps.</p>
+            <h3 style={{ fontSize: '22px', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>
+              AI Problem Recommendations
+            </h3>
+            <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>
+              Cosine similarity vector search against 30+ ground-truth problems via Neon pgvector.
+            </p>
           </div>
 
           {formSuccess && <div className="alert alert-success">{formSuccess}</div>}
 
           {(streamingRec || streamedRecText) && (
-            <div className="card" style={{ border: '1px solid #6366f1', background: 'rgba(99, 102, 241, 0.05)', marginBottom: '14px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-                <span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 10px #22c55e' }}></span>
-                <strong style={{ color: '#a5b4fc', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  {streamingRec ? 'Neon pgvector RAG + Real-Time AI Generation In Progress...' : 'Latest Live Generation'}
-                </strong>
+            <div className="ai-stream-box" style={{ marginBottom: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span className="pulse-dot"></span>
+                  <strong style={{ color: '#a5b4fc', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {streamingRec ? 'Neon pgvector RAG + Real-Time AI Stream Active...' : 'Latest Live Generation'}
+                  </strong>
+                </div>
+                <span className="badge badge-indigo" style={{ fontSize: '10px' }}>
+                  <Database size={10} /> 1536-dim Embedding
+                </span>
               </div>
-              <div style={{ fontSize: '15.5px', lineHeight: 1.7, color: '#ffffff' }}>
+              <div style={{ fontSize: '15.5px', lineHeight: 1.7, color: '#f8fafc' }}>
                 {renderFormattedMarkdown(streamedRecText)}
-                {streamingRec && <span style={{ display: 'inline-block', width: '2px', height: '18px', background: '#6366f1', marginLeft: '4px', verticalAlign: 'middle', animation: 'blink 1s infinite' }}>|</span>}
+                {streamingRec && <span style={{ display: 'inline-block', width: '2px', height: '18px', background: '#818cf8', marginLeft: '4px', verticalAlign: 'middle', animation: 'blink 1s infinite' }}>|</span>}
               </div>
             </div>
           )}
 
           {!latestRecommendation && !streamingRec && !streamedRecText ? (
-            <div className="card" style={{ padding: '40px', textAlign: 'center' }}>
-              <h4 style={{ fontSize: '16px', marginBottom: '8px' }}>No insights active</h4>
-              <p style={{ color: '#94a3b8', fontSize: '14px' }}>Generate tailored guidance using the panel on the right.</p>
+            <div className="card" style={{ padding: '50px 24px', textAlign: 'center', background: 'rgba(15, 23, 42, 0.65)' }}>
+              <div style={{ width: '54px', height: '54px', borderRadius: '16px', background: 'rgba(168, 85, 247, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto' }}>
+                <Sparkles size={24} color="#a855f7" />
+              </div>
+              <h4 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '6px' }}>No recommendations active</h4>
+              <p style={{ color: '#94a3b8', fontSize: '14px', maxWidth: '420px', margin: '0 auto 16px auto' }}>
+                Trigger grounded AI insights using the focus selector panel on the right.
+              </p>
             </div>
           ) : (
-            <div className="card">
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '12px', marginBottom: '20px' }}>
+            <div className="card" style={{ padding: '28px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '16px', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
-                  <h4 style={{ fontSize: '18px' }}>Focus Goal: {latestRecommendation.targetCompany}</h4>
-                  <span style={{ fontSize: '12px', color: '#94a3b8' }}>Generated on {formatDate(latestRecommendation.generatedAt)}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                    <span className="badge badge-purple">Focus Goal</span>
+                    <h4 style={{ fontSize: '19px', fontWeight: 800, margin: 0, color: '#ffffff' }}>{latestRecommendation.targetCompany}</h4>
+                  </div>
+                  <span style={{ fontSize: '12px', color: '#94a3b8' }}>Synthesized on {formatDate(latestRecommendation.generatedAt)}</span>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <span style={{ fontSize: '12px', color: '#94a3b8', display: 'block' }}>DSA Strength Index</span>
-                  <span style={{ fontSize: '20px', fontWeight: 700, color: '#60a5fa' }}>{latestRecommendation.interviewReadiness}%</span>
+                  <span style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block' }}>DSA Readiness</span>
+                  <span style={{ fontSize: '24px', fontWeight: 800, color: '#67e8f9' }}>{latestRecommendation.interviewReadiness}%</span>
                 </div>
               </div>
-              <div style={{ fontSize: '15.5px', lineHeight: 1.7, color: '#ffffff' }}>
+              <div style={{ fontSize: '15.5px', lineHeight: 1.7, color: '#f8fafc' }}>
                 {renderFormattedMarkdown(latestRecommendation.recommendationText)}
               </div>
             </div>
@@ -934,11 +1169,14 @@ const DashboardPage: React.FC = () => {
 
         {/* Right Side: Generator Form */}
         <div>
-          <div className="card">
-            <h4 style={{ fontSize: '16px', marginBottom: '16px' }}>Generate Skill Analysis</h4>
+          <div className="card" style={{ position: 'sticky', top: '90px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <Sparkles size={18} color="#c084fc" />
+              <h4 style={{ fontSize: '16px', margin: 0, fontWeight: 700 }}>Focus Analysis</h4>
+            </div>
             <form onSubmit={handleGenerateRecommendations} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label htmlFor="recCompany">Select Focus Goal</label>
+                <label htmlFor="recCompany">Select Goal / Pattern</label>
                 <select
                   id="recCompany"
                   value={recCompany}
@@ -952,8 +1190,18 @@ const DashboardPage: React.FC = () => {
                 </select>
               </div>
 
-              <button type="submit" className="button button-primary" disabled={recLoading}>
-                {recLoading ? 'Analyzing Solved Data...' : 'Get Insights & Recommendations'}
+              <button type="submit" className="button button-primary btn-shimmer" disabled={recLoading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', height: '46px' }}>
+                {recLoading ? (
+                  <>
+                    <span className="spinner" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></span>
+                    <span>Querying pgvector...</span>
+                  </>
+                ) : (
+                  <>
+                    <Zap size={16} />
+                    <span>Run AI Recommendation</span>
+                  </>
+                )}
               </button>
             </form>
           </div>
@@ -963,55 +1211,75 @@ const DashboardPage: React.FC = () => {
   }
 
   const renderPlatforms = () => {
+    const platformList = [
+      { id: 'leetcode', name: 'LeetCode', username: accounts?.leetcodeUsername, color: '#ffa116', badge: 'LC', solved: metrics?.platformBreakdown?.['leetcode']?.totalSolved, streak: metrics?.platformBreakdown?.['leetcode']?.currentStreak },
+      { id: 'geeksforgeeks', name: 'GeeksforGeeks', username: accounts?.geeksforgeeksUsername, color: '#10b981', badge: 'GFG', solved: metrics?.platformBreakdown?.['geeksforgeeks']?.totalSolved, streak: metrics?.platformBreakdown?.['geeksforgeeks']?.currentStreak },
+      { id: 'codechef', name: 'CodeChef', username: accounts?.codechefUsername, color: '#c084fc', badge: 'CC', solved: metrics?.platformBreakdown?.['codechef']?.totalSolved, streak: metrics?.platformBreakdown?.['codechef']?.currentStreak },
+      { id: 'github', name: 'GitHub', username: accounts?.githubUsername, color: '#a5b4fc', badge: 'GH', solved: metrics?.platformBreakdown?.['github']?.totalSolved, streak: metrics?.platformBreakdown?.['github']?.currentStreak }
+    ]
+
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '28px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '28px', alignItems: 'start' }}>
         {/* Left Side: Connected Platforms Listing */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
-            <h3 style={{ fontSize: '20px', fontWeight: 600 }}>Coding Platforms</h3>
-            <p style={{ color: '#64748b', fontSize: '14px' }}>Connect profiles to start tracking data.</p>
+            <h3 style={{ fontSize: '22px', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>
+              Platform Integrations
+            </h3>
+            <p style={{ color: '#94a3b8', fontSize: '14px', marginTop: '4px' }}>
+              Connect and aggregate your competitive programming and development profiles.
+            </p>
           </div>
 
           {formSuccess && <div className="alert alert-success">{formSuccess}</div>}
           {formError && <div className="alert alert-error">{formError}</div>}
 
-          <div className="card" style={{ padding: 0 }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid #e2e8f0', fontWeight: 600, fontSize: '14px', color: '#475569' }}>
-              Connected Accounts Status
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #f1f5f9' }}>
-                <span style={{ fontSize: '14px', fontWeight: 600 }}>LeetCode</span>
-                <span style={{ fontSize: '14px', color: accounts?.leetcodeUsername ? '#0f172a' : '#94a3b8' }}>
-                  {accounts?.leetcodeUsername || 'Not connected'}
-                </span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+            {platformList.map((p) => (
+              <div key={p.id} className="card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: `rgba(255, 255, 255, 0.06)`, border: `1px solid rgba(255, 255, 255, 0.1)`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: p.color, fontWeight: 800, fontSize: '14px' }}>
+                      {p.badge}
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff', display: 'block' }}>{p.name}</span>
+                      <span style={{ fontSize: '12px', color: p.username ? '#a5b4fc' : '#64748b' }}>
+                        {p.username ? `@${p.username}` : 'Not connected'}
+                      </span>
+                    </div>
+                  </div>
+                  <span className={p.username ? 'badge badge-emerald' : 'badge'} style={!p.username ? { background: 'rgba(255,255,255,0.05)', color: '#64748b', fontSize: '9px' } : { fontSize: '9px' }}>
+                    {p.username ? 'CONNECTED' : 'UNLINKED'}
+                  </span>
+                </div>
+
+                {p.username ? (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid rgba(255, 255, 255, 0.06)', fontSize: '12.5px' }}>
+                    <span style={{ color: '#94a3b8' }}>
+                      Solved: <strong style={{ color: '#ffffff' }}>{p.solved ?? 0}</strong>
+                    </span>
+                    <span style={{ color: '#f59e0b', fontWeight: 600 }}>
+                      🔥 {p.streak ?? 0}d streak
+                    </span>
+                  </div>
+                ) : (
+                  <div style={{ paddingTop: '10px', borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                    <span style={{ fontSize: '12px', color: '#64748b' }}>Use the connect form to link this account.</span>
+                  </div>
+                )}
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #f1f5f9' }}>
-                <span style={{ fontSize: '14px', fontWeight: 600 }}>GeeksforGeeks</span>
-                <span style={{ fontSize: '14px', color: accounts?.geeksforgeeksUsername ? '#0f172a' : '#94a3b8' }}>
-                  {accounts?.geeksforgeeksUsername || 'Not connected'}
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #f1f5f9' }}>
-                <span style={{ fontSize: '14px', fontWeight: 600 }}>CodeChef</span>
-                <span style={{ fontSize: '14px', color: accounts?.codechefUsername ? '#0f172a' : '#94a3b8' }}>
-                  {accounts?.codechefUsername || 'Not connected'}
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 20px' }}>
-                <span style={{ fontSize: '14px', fontWeight: 600 }}>GitHub</span>
-                <span style={{ fontSize: '14px', color: accounts?.githubUsername ? '#0f172a' : '#94a3b8' }}>
-                  {accounts?.githubUsername || 'Not connected'}
-                </span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
         {/* Right Side: Connect Form */}
         <div>
-          <div className="card">
-            <h4 style={{ fontSize: '16px', marginBottom: '16px' }}>Link Coding Account</h4>
+          <div className="card" style={{ position: 'sticky', top: '90px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <Link2 size={18} color="#818cf8" />
+              <h4 style={{ fontSize: '16px', margin: 0, fontWeight: 700 }}>Link Coding Account</h4>
+            </div>
             <form onSubmit={handleConnect} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label htmlFor="connectPlatform">Select Platform</label>
@@ -1028,19 +1296,20 @@ const DashboardPage: React.FC = () => {
               </div>
 
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label htmlFor="connectUsername">Username</label>
+                <label htmlFor="connectUsername">Profile Username</label>
                 <input
                   id="connectUsername"
                   type="text"
-                  placeholder="Enter username"
+                  placeholder="e.g. touring_alex"
                   value={connectUsername}
                   onChange={(e) => setConnectUsername(e.target.value)}
                   required
                 />
               </div>
 
-              <button type="submit" className="button button-primary">
-                Connect Profile
+              <button type="submit" className="button button-primary btn-shimmer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', height: '46px' }}>
+                <CheckCircle2 size={16} />
+                <span>Link & Sync Profile</span>
               </button>
             </form>
           </div>
@@ -1051,78 +1320,92 @@ const DashboardPage: React.FC = () => {
 
   const renderSettings = () => {
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '24px', alignItems: 'start' }}>
-        <div className="card">
-          <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '20px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>Profile Card</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', textAlign: 'center', marginBottom: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '360px 1fr', gap: '28px', alignItems: 'start' }}>
+        <div className="card" style={{ padding: '28px' }}>
+          <h4 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '20px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '10px' }}>
+            Profile Overview
+          </h4>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', textAlign: 'center', marginBottom: '24px' }}>
             <div style={{ position: 'relative' }}>
               <img
                 src={profilePhoto || "https://api.dicebear.com/7.x/bottts/svg?seed=" + (user?.name || "default")}
                 alt="Profile Avatar"
-                style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: '3px solid #3b82f6', backgroundColor: '#f8fafc' }}
+                style={{ width: '96px', height: '96px', borderRadius: '50%', objectFit: 'cover', border: '3px solid #6366f1', boxShadow: '0 0 20px rgba(99, 102, 241, 0.35)', backgroundColor: '#0f172a' }}
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = "https://api.dicebear.com/7.x/bottts/svg?seed=" + (user?.name || "default")
                 }}
               />
             </div>
             <div>
-              <h4 style={{ fontSize: '18px', fontWeight: 600, margin: '4px 0' }}>{user?.name}</h4>
-              <span style={{ fontSize: '14px', color: '#64748b' }}>{user?.email}</span>
+              <h4 style={{ fontSize: '18px', fontWeight: 700, margin: '2px 0', color: '#ffffff' }}>{user?.name}</h4>
+              <span style={{ fontSize: '13px', color: '#94a3b8' }}>{user?.email}</span>
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
-            <div>
-              <span style={{ fontSize: '12px', color: '#64748b', display: 'block' }}>College Name</span>
-              <span style={{ fontSize: '14px', fontWeight: 500, color: user?.collegeName ? '#0f172a' : '#94a3b8' }}>
-                {user?.collegeName || 'Not configured'}
-              </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '18px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <GraduationCap size={16} color="#818cf8" />
+              <div>
+                <span style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block' }}>College</span>
+                <span style={{ fontSize: '13.5px', fontWeight: 600, color: user?.collegeName ? '#ffffff' : '#64748b' }}>
+                  {user?.collegeName || 'Not configured'}
+                </span>
+              </div>
             </div>
-            <div>
-              <span style={{ fontSize: '12px', color: '#64748b', display: 'block' }}>Contact Number</span>
-              <span style={{ fontSize: '14px', fontWeight: 500, color: user?.contactNumber ? '#0f172a' : '#94a3b8' }}>
-                {user?.contactNumber || 'Not configured'}
-              </span>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Phone size={16} color="#818cf8" />
+              <div>
+                <span style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block' }}>Contact</span>
+                <span style={{ fontSize: '13.5px', fontWeight: 600, color: user?.contactNumber ? '#ffffff' : '#64748b' }}>
+                  {user?.contactNumber || 'Not configured'}
+                </span>
+              </div>
             </div>
-            <div>
-              <span style={{ fontSize: '12px', color: '#64748b', display: 'block' }}>Resume Link</span>
-              {user?.resumeUrl ? (
-                <a href={user.resumeUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '14px', fontWeight: 500, color: '#3b82f6', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
-                  📄 View Resume
-                </a>
-              ) : (
-                <span style={{ fontSize: '14px', fontWeight: 500, color: '#94a3b8' }}>Not configured</span>
-              )}
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <FileText size={16} color="#818cf8" />
+              <div>
+                <span style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block' }}>Resume Link</span>
+                {user?.resumeUrl ? (
+                  <a href={user.resumeUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '13.5px', fontWeight: 600, color: '#38bdf8', display: 'inline-flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
+                    <span>View Resume</span>
+                    <ExternalLink size={12} />
+                  </a>
+                ) : (
+                  <span style={{ fontSize: '13.5px', color: '#64748b' }}>Not linked</span>
+                )}
+              </div>
             </div>
-            <div>
-              <span style={{ fontSize: '12px', color: '#64748b', display: 'block' }}>Account Created</span>
-              <span style={{ fontSize: '14px', fontWeight: 500 }}>
-                {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
-              </span>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Clock size={16} color="#818cf8" />
+              <div>
+                <span style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block' }}>Member Since</span>
+                <span style={{ fontSize: '13.5px', fontWeight: 600, color: '#ffffff' }}>
+                  {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Active'}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="card">
-          <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '20px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>Edit Profile Information</h3>
+        <div className="card" style={{ padding: '28px' }}>
+          <h4 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '20px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', paddingBottom: '10px' }}>
+            Edit Profile Information
+          </h4>
           
           {profileMessage && (
-            <div style={{
-              padding: '12px',
-              borderRadius: '6px',
-              marginBottom: '16px',
-              fontSize: '14px',
-              backgroundColor: profileMessage.startsWith('Error') ? '#fef2f2' : '#ecfdf5',
-              color: profileMessage.startsWith('Error') ? '#991b1b' : '#065f46',
-              border: profileMessage.startsWith('Error') ? '1px solid #fca5a5' : '1px solid #6ee7b7'
-            }}>
+            <div className={profileMessage.startsWith('Error') ? 'alert alert-error' : 'alert alert-success'} style={{ padding: '10px 14px', fontSize: '13.5px' }}>
               {profileMessage}
             </div>
           )}
 
-          <form onSubmit={handleUpdateProfile} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label htmlFor="profileName" style={{ fontSize: '13px', fontWeight: 500, color: '#334155' }}>Name</label>
+          <form onSubmit={handleUpdateProfile} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label htmlFor="profileName" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <User size={13} color="#818cf8" /> Full Name
+              </label>
               <input
                 id="profileName"
                 type="text"
@@ -1133,52 +1416,70 @@ const DashboardPage: React.FC = () => {
               />
             </div>
 
-            <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label htmlFor="collegeName" style={{ fontSize: '13px', fontWeight: 500, color: '#334155' }}>College Name</label>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label htmlFor="collegeName" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <GraduationCap size={13} color="#818cf8" /> College / University
+              </label>
               <input
                 id="collegeName"
                 type="text"
                 value={collegeName}
                 onChange={(e) => setCollegeName(e.target.value)}
-                placeholder="Enter College/University Name"
+                placeholder="Enter College or University"
               />
             </div>
 
-            <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label htmlFor="contactNumber" style={{ fontSize: '13px', fontWeight: 500, color: '#334155' }}>Contact Number</label>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label htmlFor="contactNumber" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Phone size={13} color="#818cf8" /> Phone / Contact Number
+              </label>
               <input
                 id="contactNumber"
                 type="text"
                 value={contactNumber}
                 onChange={(e) => setContactNumber(e.target.value)}
-                placeholder="Enter Phone/Contact Number"
+                placeholder="+1 (555) 000-0000"
               />
             </div>
 
-            <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label htmlFor="profilePhoto" style={{ fontSize: '13px', fontWeight: 500, color: '#334155' }}>Profile Photo URL</label>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label htmlFor="profilePhoto" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Sparkles size={13} color="#818cf8" /> Profile Photo URL (or Leave for DiceBear avatar)
+              </label>
               <input
                 id="profilePhoto"
                 type="text"
                 value={profilePhoto}
                 onChange={(e) => setProfilePhoto(e.target.value)}
-                placeholder="Enter avatar image link (e.g. https://...)"
+                placeholder="https://..."
               />
             </div>
 
-            <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <label htmlFor="resumeUrl" style={{ fontSize: '13px', fontWeight: 500, color: '#334155' }}>Resume Link (Google Drive / Dropbox)</label>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label htmlFor="resumeUrl" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <FileText size={13} color="#818cf8" /> Resume Link (Google Drive / Dropbox)
+              </label>
               <input
                 id="resumeUrl"
                 type="text"
                 value={resumeUrl}
                 onChange={(e) => setResumeUrl(e.target.value)}
-                placeholder="Enter link to view resume"
+                placeholder="https://drive.google.com/..."
               />
             </div>
 
-            <button type="submit" className="button button-primary" disabled={profileLoading} style={{ marginTop: '10px' }}>
-              {profileLoading ? 'Updating Profile...' : 'Save Profile Changes'}
+            <button type="submit" className="button button-primary btn-shimmer" disabled={profileLoading} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', height: '46px', marginTop: '6px' }}>
+              {profileLoading ? (
+                <>
+                  <span className="spinner" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></span>
+                  <span>Saving Changes...</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 size={16} />
+                  <span>Save Profile Changes</span>
+                </>
+              )}
             </button>
           </form>
         </div>
@@ -1209,11 +1510,35 @@ const DashboardPage: React.FC = () => {
     <div className="dashboard">
       <nav className="navbar">
         <div className="navbar-content">
-          <h1>CodeInsight.AI</h1>
+          <div className="brand-container">
+            <div className="brand-icon">
+              <Terminal size={20} color="#ffffff" />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h1 style={{ margin: 0, lineHeight: 1.1 }}>CodeInsight.AI</h1>
+                <span className="navbar-badge" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span className="pulse-dot"></span>
+                  pgvector RAG
+                </span>
+              </div>
+            </div>
+          </div>
           <div className="navbar-right">
-            <span className="user-name">Welcome, {user?.name}!</span>
-            <button onClick={handleLogout} className="button button-secondary" style={{ padding: '8px 14px', fontSize: '13px' }}>
-              Logout
+            <div className="user-badge">
+              <img
+                src={profilePhoto || "https://api.dicebear.com/7.x/bottts/svg?seed=" + (user?.name || "default")}
+                alt="Avatar"
+                className="user-avatar-mini"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "https://api.dicebear.com/7.x/bottts/svg?seed=" + (user?.name || "default")
+                }}
+              />
+              <span className="user-name">{user?.name || 'Developer'}</span>
+            </div>
+            <button onClick={handleLogout} className="button button-secondary" style={{ padding: '7px 14px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <LogOut size={14} />
+              <span>Logout</span>
             </button>
           </div>
         </div>
@@ -1222,55 +1547,93 @@ const DashboardPage: React.FC = () => {
       <div className="dashboard-container">
         <aside className="sidebar">
           <nav className="sidebar-nav">
+            <div className="nav-section-title">INTELLIGENCE</div>
             <button
               onClick={() => { setActiveTab('dashboard'); setFormSuccess(null); setFormError(null); }}
               className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
               style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
-              <span>Dashboard</span>
+              <div className="nav-item-content">
+                <LayoutDashboard size={17} />
+                <span>Dashboard</span>
+              </div>
             </button>
             <button
               onClick={() => { setActiveTab('analytics'); setFormSuccess(null); setFormError(null); }}
               className={`nav-item ${activeTab === 'analytics' ? 'active' : ''}`}
               style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>
-              <span>Analytics</span>
+              <div className="nav-item-content">
+                <TrendingUp size={17} />
+                <span>Analytics</span>
+              </div>
             </button>
+
+            <div className="nav-section-title" style={{ marginTop: '14px' }}>AI ACCELERATOR</div>
             <button
               onClick={() => { setActiveTab('study-plan'); setFormSuccess(null); setFormError(null); }}
               className={`nav-item ${activeTab === 'study-plan' ? 'active' : ''}`}
               style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></svg>
-              <span>Study Plan</span>
+              <div className="nav-item-content">
+                <BookOpen size={17} />
+                <span>Study Plan</span>
+              </div>
+              <span className="badge badge-indigo" style={{ fontSize: '9.5px', padding: '2px 6px' }}>AI</span>
             </button>
             <button
               onClick={() => { setActiveTab('recommendations'); setFormSuccess(null); setFormError(null); }}
               className={`nav-item ${activeTab === 'recommendations' ? 'active' : ''}`}
               style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .3 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><line x1="9" y1="18" x2="15" y2="18" /><line x1="10" y1="22" x2="14" y2="22" /></svg>
-              <span>Recommendations</span>
+              <div className="nav-item-content">
+                <Sparkles size={17} />
+                <span>Recommendations</span>
+              </div>
+              <span className="badge badge-purple" style={{ fontSize: '9.5px', padding: '2px 6px' }}>RAG</span>
             </button>
+
+            <div className="nav-section-title" style={{ marginTop: '14px' }}>CONFIGURATION</div>
             <button
               onClick={() => { setActiveTab('platforms'); setFormSuccess(null); setFormError(null); }}
               className={`nav-item ${activeTab === 'platforms' ? 'active' : ''}`}
               style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
-              <span>Platforms</span>
+              <div className="nav-item-content">
+                <Link2 size={17} />
+                <span>Platforms</span>
+              </div>
             </button>
             <button
               onClick={() => { setActiveTab('settings'); setFormSuccess(null); setFormError(null); }}
               className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`}
               style={{ border: 'none', background: 'none', width: '100%', textAlign: 'left', cursor: 'pointer' }}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
-              <span>Settings</span>
+              <div className="nav-item-content">
+                <Settings size={17} />
+                <span>Settings</span>
+              </div>
             </button>
           </nav>
+
+          <div className="sidebar-status-card">
+            <div className="sidebar-status-header">
+              <Cpu size={13} color="#818cf8" />
+              <span>Engine Status</span>
+            </div>
+            <div className="sidebar-status-item">
+              <span>pgvector RAG</span>
+              <span className="badge badge-emerald" style={{ fontSize: '9px', padding: '1px 6px' }}>ONLINE</span>
+            </div>
+            <div className="sidebar-status-item">
+              <span>SSE Stream</span>
+              <span className="badge badge-cyan" style={{ fontSize: '9px', padding: '1px 6px' }}>ACTIVE</span>
+            </div>
+            <div className="sidebar-status-item">
+              <span>Bucket4j Rate Limit</span>
+              <span className="badge badge-indigo" style={{ fontSize: '9px', padding: '1px 6px' }}>SECURE</span>
+            </div>
+          </div>
         </aside>
 
         <main className="main-content">

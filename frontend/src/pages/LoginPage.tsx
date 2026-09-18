@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { Sparkles, Mail, Lock, ArrowRight, ShieldCheck, Zap, Database } from 'lucide-react'
 import './Auth.css'
 
 const LoginPage: React.FC = () => {
@@ -20,7 +21,7 @@ const LoginPage: React.FC = () => {
       await login(email, password)
       navigate('/')
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.')
+      setError(err.response?.data?.message || 'Login failed. Please check your credentials.')
     } finally {
       setLoading(false)
     }
@@ -29,17 +30,28 @@ const LoginPage: React.FC = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>CodeInsight.AI</h1>
-        <h2>Login</h2>
+        <div className="auth-header">
+          <div className="auth-brand-badge">
+            <Sparkles size={14} color="#818cf8" />
+            <span style={{ fontSize: '11.5px', fontWeight: 700, color: '#a5b4fc', letterSpacing: '0.05em' }}>
+              AI DEVELOPER INTELLIGENCE
+            </span>
+          </div>
+          <h1>CodeInsight.AI</h1>
+          <h2>Welcome back! Sign in to view your algorithmic intelligence</h2>
+        </div>
         
         {error && <div className="alert alert-error">{error}</div>}
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Mail size={13} color="#818cf8" /> Email Address
+            </label>
             <input
               id="email"
               type="email"
+              placeholder="developer@codeinsight.ai"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -48,10 +60,13 @@ const LoginPage: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Lock size={13} color="#818cf8" /> Password
+            </label>
             <input
               id="password"
               type="password"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -59,14 +74,36 @@ const LoginPage: React.FC = () => {
             />
           </div>
 
-          <button type="submit" className="button button-primary" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+          <button type="submit" className="button button-primary btn-shimmer" disabled={loading} style={{ display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
+            {loading ? (
+              <>
+                <span className="spinner" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></span>
+                <span>Authenticating...</span>
+              </>
+            ) : (
+              <>
+                <span>Sign In to Dashboard</span>
+                <ArrowRight size={16} />
+              </>
+            )}
           </button>
         </form>
 
         <p className="auth-link">
-          Don't have an account? <Link to="/register">Register here</Link>
+          Don't have an account? <Link to="/register">Create an account</Link>
         </p>
+
+        <div className="auth-features-footer">
+          <span className="badge badge-indigo">
+            <Database size={11} /> pgvector RAG
+          </span>
+          <span className="badge badge-cyan">
+            <Zap size={11} /> Real-time SSE
+          </span>
+          <span className="badge badge-emerald">
+            <ShieldCheck size={11} /> Rate Limited
+          </span>
+        </div>
       </div>
     </div>
   )
