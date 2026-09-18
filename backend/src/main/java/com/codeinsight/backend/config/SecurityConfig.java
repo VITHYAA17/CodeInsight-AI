@@ -47,8 +47,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of(
-                "https://codeinsight-frontend-d22s.onrender.com",
+                "https://*.onrender.com",
                 "http://localhost:5173",
+                "http://localhost:3000",
                 "https://*.vercel.app"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
