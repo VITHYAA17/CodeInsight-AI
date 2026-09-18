@@ -3,13 +3,16 @@ package com.codeinsight.backend.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -39,7 +42,20 @@ public class RedisConfig implements CachingConfigurer {
     }
 
     @Bean
-    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+        try {
+            RedisConnection connection = connectionFactory.getConnection();
+            connection.ping();
+            connection.close();
+            log.info("[CACHE ENGINE] Redis connection verified. Using distributed RedisCacheManager.");
+            return createRedisCacheManager(connectionFactory);
+        } catch (Exception e) {
+            log.info("[CACHE ENGINE] Redis server is not running on localhost:6379 ({}). Falling back to in-memory ConcurrentMapCacheManager.", e.getMessage());
+            return new ConcurrentMapCacheManager("user_metrics", "user_performance", "user_insights", "platform_stats");
+        }
+    }
+
+    private RedisCacheManager createRedisCacheManager(RedisConnectionFactory connectionFactory) {
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(30))
                 .disableCachingNullValues()
