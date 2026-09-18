@@ -2,13 +2,14 @@ services:
   - type: web
     name: codeinsight-ai-backend
     runtime: docker
+    region: oregon
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     envVars:
       - key: SPRING_DATASOURCE_URL
         fromDatabase:
           name: codeinsight-db
-          property: jdbcUrl
+          property: connectionString
       - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: codeinsight-db
@@ -25,11 +26,15 @@ services:
   - type: web
     name: codeinsight-frontend
     runtime: static
+    region: oregon
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/dist
     envVars:
       - key: VITE_API_BASE_URL
-        value: https://codeinsight-ai-backend-ncxn.onrender.com/api
+        fromService:
+          type: web
+          name: codeinsight-ai-backend
+          envVarKey: RENDER_EXTERNAL_URL
     routes:
       - type: rewrite
         source: /*
@@ -37,5 +42,6 @@ services:
 
 databases:
   - name: codeinsight-db
+    region: oregon
     plan: free
     databaseName: codeinsight
