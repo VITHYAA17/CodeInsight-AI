@@ -69,7 +69,8 @@ public class UserService {
         userRepository.save(user);
 
         String token = jwtService.generateToken(user.getEmail());
-        return new ApiResponse(true, "Registration successful", new AuthResponse(token, "Registration successful"));
+        UserResponse userResponse = mapToUserResponse(user);
+        return new ApiResponse(true, "Registration successful", new AuthResponse(token, "Registration successful", userResponse));
     }
 
     public ApiResponse login(LoginRequest request) {
@@ -81,7 +82,8 @@ public class UserService {
 
         User user = userOpt.get();
         String token = jwtService.generateToken(user.getEmail());
-        return new ApiResponse(true, "Login successful", new AuthResponse(token, "Login successful"));
+        UserResponse userResponse = mapToUserResponse(user);
+        return new ApiResponse(true, "Login successful", new AuthResponse(token, "Login successful", userResponse));
     }
 
     public UserResponse getUserByEmail(String email) {

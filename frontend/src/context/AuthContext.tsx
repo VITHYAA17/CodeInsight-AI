@@ -54,10 +54,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setError(null)
     try {
       const response = await authAPI.login({ email, password })
-      const { token } = response.data.data
+      const { token, user: returnedUser } = response.data.data
       localStorage.setItem('jwt_token', token)
-      const userProfileResponse = await authAPI.getCurrentUser()
-      setUser(userProfileResponse.data.data)
+      if (returnedUser) {
+        setUser(returnedUser)
+      } else {
+        const userProfileResponse = await authAPI.getCurrentUser()
+        setUser(userProfileResponse.data.data)
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed')
       throw err
@@ -68,10 +72,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setError(null)
     try {
       const response = await authAPI.register({ name, email, password })
-      const { token } = response.data.data
+      const { token, user: returnedUser } = response.data.data
       localStorage.setItem('jwt_token', token)
-      const userProfileResponse = await authAPI.getCurrentUser()
-      setUser(userProfileResponse.data.data)
+      if (returnedUser) {
+        setUser(returnedUser)
+      } else {
+        const userProfileResponse = await authAPI.getCurrentUser()
+        setUser(userProfileResponse.data.data)
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed')
       throw err

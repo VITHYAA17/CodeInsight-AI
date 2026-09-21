@@ -33,6 +33,8 @@ api.interceptors.response.use(
 
 // Auth APIs
 export const authAPI = {
+  pingHealth: () =>
+    api.get('/auth/health'),
   register: (data: { name: string; email: string; password: string }) =>
     api.post('/auth/register', data),
   login: (data: { email: string; password: string }) =>
