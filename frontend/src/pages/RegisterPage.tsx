@@ -42,6 +42,10 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="auth-container">
+      <div className="auth-bg-decoration">
+        <div className="auth-bg-ring-outer"></div>
+        <div className="auth-bg-ring-inner"></div>
+      </div>
       <div className="auth-card">
         <div className="auth-header">
           <div className="auth-brand-badge">

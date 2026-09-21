@@ -199,7 +199,15 @@
   flex: 1;
   overflow-y: auto;
   padding: 32px 40px;
-  background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.06), transparent 500px);
+  background-color: var(--bg-app);
+  background-image: 
+    radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent 550px),
+    radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.1), transparent 500px),
+    radial-gradient(rgba(129, 140, 248, 0.18) 1.2px, transparent 1.2px),
+    linear-gradient(to right, rgba(99, 102, 241, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 32px 32px, 64px 64px, 64px 64px;
+  background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
 }
 
 .main-content h2 {
