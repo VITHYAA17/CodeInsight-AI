@@ -32,7 +32,6 @@ import {
   Database,
   Code2,
   Terminal,
-  Cpu,
   User,
   GraduationCap,
   Phone,
@@ -1615,25 +1614,6 @@ const DashboardPage: React.FC = () => {
               </div>
             </button>
           </nav>
-
-          <div className="sidebar-status-card">
-            <div className="sidebar-status-header">
-              <Cpu size={13} color="#818cf8" />
-              <span>Engine Status</span>
-            </div>
-            <div className="sidebar-status-item">
-              <span>pgvector RAG</span>
-              <span className="badge badge-emerald" style={{ fontSize: '9px', padding: '1px 6px' }}>ONLINE</span>
-            </div>
-            <div className="sidebar-status-item">
-              <span>SSE Stream</span>
-              <span className="badge badge-cyan" style={{ fontSize: '9px', padding: '1px 6px' }}>ACTIVE</span>
-            </div>
-            <div className="sidebar-status-item">
-              <span>Bucket4j Rate Limit</span>
-              <span className="badge badge-indigo" style={{ fontSize: '9px', padding: '1px 6px' }}>SECURE</span>
-            </div>
-          </div>
         </aside>
 
         <main className="main-content">
