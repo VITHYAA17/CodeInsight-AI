@@ -1,0 +1,14 @@
+# Copy this file to terraform.tfvars and populate with actual credentials
+project_id          = "codeinsight-ai-production"
+region              = "us-central1"
+zone                = "us-central1-a"
+environment         = "prod"
+cluster_name        = "codeinsight-gke-cluster"
+gke_node_count_min  = 1
+gke_node_count_max  = 4
+gke_machine_type    = "e2-standard-2"
+db_instance_tier    = "db-custom-2-7680"
+db_name             = "codeinsight"
+db_username         = "codeinsight_app"
+db_password         = "ChangeMeSecurePassword123!" # Replace with high-entropy secret
+redis_memory_size_gb= 1

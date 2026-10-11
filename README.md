@@ -27,10 +27,27 @@ Note: Since the services are hosted on Render's free tier, there might be a 50-9
 
 ## Tech Stack I Used
 
-- **Backend**: Java 21, Spring Boot 3.x, Spring Data JPA, Hibernate, Spring Security with JWT tokens, and PostgreSQL.
-- **Frontend**: React 18, TypeScript, Vite, Recharts for charts, and custom CSS for a dark glassmorphic UI.
+- **Backend**: Java 21, Spring Boot 3.x, Spring Data JPA, Hibernate, Spring Security with JWT tokens, PostgreSQL with `pgvector`, Redis (caching & Bucket4j rate limiting).
+- **AI & RAG Engine**: Spring AI, OpenAI GPT-4.1, PostgreSQL `pgvector` cosine similarity search, Server-Sent Events (SSE) real-time streaming.
+- **Frontend**: React 18, TypeScript, Vite, Recharts for analytics data visualization, and custom CSS for a dark glassmorphic UI.
+- **DevOps & Cloud Infrastructure**: Docker, Kubernetes (GKE), Terraform (IaC on GCP), Jenkins CI/CD pipeline.
 
+---
 
+## ☁️ Cloud Infrastructure & DevOps (Terraform & Kubernetes)
+
+The application includes enterprise-grade Cloud Infrastructure as Code (IaC) and container orchestration:
+
+- **Terraform ([`terraform/`](terraform/))**: Complete GCP modular infrastructure provisioning:
+  - Custom VPC with secondary IP ranges for Pods (`10.20.0.0/16`) and Services (`10.30.0.0/20`), with Cloud NAT for private node egress.
+  - Private **Google Kubernetes Engine (GKE)** cluster with Workload Identity and autoscaling node pools.
+  - Managed **Cloud SQL PostgreSQL 15** with `cloudsql.enable_pgvector = on` for AI semantic vector search.
+  - Managed **Cloud Memorystore for Redis** for distributed rate limiting and caching.
+  - **Google Artifact Registry** for private Docker image storage.
+- **Kubernetes ([`k8s/`](k8s/))**: Production declarative manifests featuring Deployments, ClusterIP Services, ConfigMaps, Secrets, and Ingress with rolling zero-downtime updates and health probes.
+- **CI/CD Pipeline ([`Jenkinsfile`](Jenkinsfile))**: Declarative Jenkins pipeline automating Maven build & test, React Vite packaging, Docker image creation, Artifact Registry push, and zero-downtime GKE deployment rollout.
+
+---
 
 ## Styling and Themes
 
@@ -39,3 +56,4 @@ The UI uses a custom-built, modern glassmorphic dark theme. All design tokens (c
 - Layout spacing: `frontend/src/pages/Dashboard.css`
 
 I styled this using CSS variables so it is easy to customize. If you want to change the primary accent colors or adjust typography sizes, you can modify the tokens block inside the `index.css` file.
+

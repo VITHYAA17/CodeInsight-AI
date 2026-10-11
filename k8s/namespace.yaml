@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: codeinsight
+  labels:
+    app.kubernetes.io/name: codeinsight
+    environment: production
